@@ -16,6 +16,7 @@ public class ChatController {
         return ResponseEntity.ok("Чат API працює");
     }
 
+
     @GetMapping("/messages")
     public List<Message> getTestMessages() {
         return List.of(
