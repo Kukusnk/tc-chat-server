@@ -17,6 +17,10 @@ public class ChatController {
     }
 
 
+    /**
+     *
+     * @return List Messages
+     */
     @GetMapping("/messages")
     public List<Message> getTestMessages() {
         return List.of(
