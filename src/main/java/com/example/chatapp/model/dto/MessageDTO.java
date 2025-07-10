@@ -1,6 +1,5 @@
 package com.example.chatapp.model.dto;
 
-import com.example.chatapp.model.User;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
