@@ -1,6 +1,12 @@
 server:
   port: 8088
 
+springdoc:
+  api-docs:
+    path: /q/api-docs
+  swagger-ui:
+    path: /q/swagger-ui
+
 spring:
   datasource:
     url: ${SPRING_DATASOURCE_URL}
