@@ -13,7 +13,7 @@ public class DevTools {
 
     public static MessageDTO messageToDTO(Message message) {
         return new MessageDTO(
-                message.getSender().getNickname(),
+                message.getSender(),
                 message.getContent(),
                 message.getTimestamp()
         );

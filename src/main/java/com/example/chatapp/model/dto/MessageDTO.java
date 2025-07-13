@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MessageDTO {
-    String senderNickname;
+    String sender;
     String content;
     LocalDateTime timestamp;
 }
