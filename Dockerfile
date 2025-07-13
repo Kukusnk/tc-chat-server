@@ -1,0 +1,13 @@
+# Этап сборки
+FROM maven:3.9-eclipse-temurin-17 AS build
+WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package -DskipTests
+
+# Этап запуска
+FROM openjdk:17-jdk-slim
+WORKDIR /app
+COPY --from=build /app/target/chat-app.jar /app/chat-app.jar
+EXPOSE 8088
+ENTRYPOINT ["java", "-jar", "/app/chat-app.jar"]

@@ -1,13 +1,14 @@
 package com.example.chatapp.repository;
 
 import com.example.chatapp.model.Room;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
-public class RoomRepository {
+
+public interface RoomRepository extends JpaRepository<Room, Long>  {
     private final Map<Long, Room> rooms = new HashMap<>();
     private final AtomicLong idGenerator = new AtomicLong(1);
 
@@ -24,4 +25,5 @@ public class RoomRepository {
     public Optional<Room> findById(Long id) {
         return Optional.ofNullable(rooms.get(id));
     }
+
 }
