@@ -1,4 +1,4 @@
-package com.example.chatapp.dto;
+package com.example.chatapp.model.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

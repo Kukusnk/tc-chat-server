@@ -1,6 +1,6 @@
 package com.example.chatapp.controller;
 
-import com.example.chatapp.dto.CreateRoomRequest;
+import com.example.chatapp.model.dto.CreateRoomRequest;
 import com.example.chatapp.model.Room;
 import com.example.chatapp.service.RoomService;
 import io.swagger.v3.oas.annotations.Operation;
