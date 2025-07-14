@@ -22,16 +22,16 @@ public class RoomController {
     private final RoomService roomService;
 
     @PostMapping
-    @Operation(summary = "Створити нову кімнату")
+    @Operation(summary = "Create a new room")
     @ApiResponse(responseCode = "200", description = "Кімната успішно створена")
     public ResponseEntity<Room> createRoom(@Valid @RequestBody CreateRoomRequest request) {
-        log.info("Створення кімнати з назвою: {}", request.getName());
+        log.info("Create a room with a name: {}", request.getName());
         Room room = roomService.createRoom(request.getName());
         return ResponseEntity.ok(room);
     }
 
     @GetMapping
-    @Operation(summary = "Отримати список всіх кімнат")
+    @Operation(summary = "Get a list of all rooms")
     public ResponseEntity<List<Room>> getAllRooms() {
         log.info("Запит всіх кімнат");
         return ResponseEntity.ok(roomService.getAllRooms());
