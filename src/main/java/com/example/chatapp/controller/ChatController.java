@@ -3,13 +3,12 @@ package com.example.chatapp.controller;
 import com.example.chatapp.model.Message;
 import com.example.chatapp.model.dto.MessageDTO;
 import com.example.chatapp.model.dto.SendMessageDTO;
-import com.example.chatapp.repository.MessageRepository;
+import com.example.chatapp.service.MessageService;
 import com.example.chatapp.util.DevTools;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +23,7 @@ public class ChatController {
     private final static Logger log = LoggerFactory.getLogger(ChatController.class);
     static List<Message> testMessages = new ArrayList<>();
 
-    private final MessageRepository messageRepository;
+    private final MessageService messageService;
 
 
     static {
@@ -44,8 +43,8 @@ public class ChatController {
         testMessages.add(mes2);
     }
 
-    public ChatController(MessageRepository messageRepository) {
-        this.messageRepository = messageRepository;
+    public ChatController(MessageService messageService) {
+        this.messageService = messageService;
     }
 
     @Operation(
@@ -88,7 +87,7 @@ public class ChatController {
 
     @GetMapping("/{room_id}/messages")
     public ResponseEntity<List<MessageDTO>> getMessage(@PathVariable Long room_id) {
-        List<Message> messages = messageRepository.findByRoom_Id(room_id);
+        List<Message> messages = messageService.getAllMessagesByRoomId(room_id);
         List<MessageDTO> messageDTOs = new ArrayList<>(messages.stream().map(DevTools::messageToDTO).toList());
         return ResponseEntity.ok(messageDTOs);
     }

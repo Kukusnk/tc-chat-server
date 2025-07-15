@@ -1,8 +1,8 @@
-INSERT INTO room (tittle)
+INSERT INTO room (name)
 VALUES ('General');
-INSERT INTO room (tittle)
+INSERT INTO room (name)
 VALUES ('Technology');
-INSERT INTO room (tittle)
+INSERT INTO room (name)
 VALUES ('Gaming');
 
 INSERT INTO message (sender, content, timestamp, room_id)
