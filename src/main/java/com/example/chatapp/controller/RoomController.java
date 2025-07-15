@@ -1,7 +1,7 @@
 package com.example.chatapp.controller;
 
-import com.example.chatapp.model.dto.CreateRoomRequest;
 import com.example.chatapp.model.Room;
+import com.example.chatapp.model.dto.CreateRoomRequest;
 import com.example.chatapp.service.RoomService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -23,7 +23,7 @@ public class RoomController {
 
     @PostMapping
     @Operation(summary = "Create a new room")
-    @ApiResponse(responseCode = "200", description = "Кімната успішно створена")
+    @ApiResponse(responseCode = "200", description = "Room successfully created")
     public ResponseEntity<Room> createRoom(@Valid @RequestBody CreateRoomRequest request) {
         log.info("Create a room with a name: {}", request.getName());
         Room room = roomService.createRoom(request.getName());
@@ -33,14 +33,14 @@ public class RoomController {
     @GetMapping
     @Operation(summary = "Get a list of all rooms")
     public ResponseEntity<List<Room>> getAllRooms() {
-        log.info("Запит всіх кімнат");
+        log.info("Request all rooms");
         return ResponseEntity.ok(roomService.getAllRooms());
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Отримати кімнату за ID")
+    @Operation(summary = "Get a room by ID")
     public ResponseEntity<Room> getRoomById(@PathVariable Long id) {
-        log.info("Пошук кімнати з ID: {}", id);
+        log.info("Search for a room by ID: {}", id);
         return ResponseEntity.ok(roomService.getRoomById(id));
     }
 }
