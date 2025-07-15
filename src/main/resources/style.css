@@ -1,0 +1,90 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h2 {
+    margin-bottom: 10px;
+}
+
+#messages {
+    width: 600px;
+    min-height: 300px;
+    max-height: 500px;
+    overflow-y: auto;
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+}
+
+.field {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+input#inputMessage {
+    flex: 1;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+
+button#send {
+    padding: 10px 20px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button#send:hover {
+    background-color: #45a049;
+}
+
+.message-bubble {
+    max-width: 60%;
+    padding: 10px 15px;
+    border-radius: 15px;
+    margin: 5px 0;
+    display: inline-block;
+    position: relative;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.client {
+    align-self: flex-end;
+    background-color: #dcf8c6;
+    border-bottom-right-radius: 0;
+}
+
+.server {
+    align-self: flex-start;
+    background-color: #e6ecff;
+    border-bottom-left-radius: 0;
+}
+
+.message-bubble p {
+    margin: 0 0 5px 0;
+    word-wrap: break-word;
+}
+
+.message-bubble span {
+    font-size: 0.75em;
+    color: gray;
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+}
