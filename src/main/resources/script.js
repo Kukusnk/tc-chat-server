@@ -1,4 +1,4 @@
-var socket = new SockJS('http://localhost:8088/ws');
+var socket = new SockJS('http://localhost:8080/ws');
 var stompClient = Stomp.over(socket);
 
 stompClient.connect({}, function (frame) {

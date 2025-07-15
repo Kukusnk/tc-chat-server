@@ -9,5 +9,5 @@ RUN mvn clean package -DskipTests
 FROM openjdk:17-jdk-slim
 WORKDIR /app
 COPY --from=build /app/target/chat-app.jar /app/chat-app.jar
-EXPOSE 8088
+EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "/app/chat-app.jar"]
