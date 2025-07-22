@@ -1,7 +1,9 @@
 package com.example.chatapp.util;
 
 import com.example.chatapp.model.Message;
+import com.example.chatapp.model.Room;
 import com.example.chatapp.model.dto.MessageDTO;
+import com.example.chatapp.model.dto.RoomDTO;
 
 import java.util.List;
 
@@ -17,5 +19,9 @@ public class DevTools {
                 message.getContent(),
                 message.getTimestamp()
         );
+    }
+
+    public static RoomDTO roomsToDTO(Room room) {
+        return new RoomDTO(room.getName());
     }
 }

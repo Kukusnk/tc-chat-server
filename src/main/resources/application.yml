@@ -6,6 +6,24 @@ springdoc:
     path: /q/api-docs
   swagger-ui:
     path: /q/swagger-ui
+  packages-to-scan: com.example.chatapp
+
+springwolf:
+  enabled: true
+  docket:
+    base-package: com.example.chatapp
+    info:
+      title: WebSocket Chat API
+      version: 1.0.0
+      description: AsyncAPI documentation for WebSocket-based chat application
+    servers:
+      stomp-server:
+        protocol: stomp
+        host: localhost:8080
+  ui:
+    defaults:
+      show-bindings: true
+      show-headers: true
 
 spring:
   datasource:

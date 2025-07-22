@@ -1,4 +1,4 @@
-package com.example.chatapp.controller;
+package com.example.chatapp.controller.rest;
 
 import com.example.chatapp.model.Room;
 import com.example.chatapp.model.dto.CreateRoomRequest;
@@ -34,7 +34,9 @@ public class RoomController {
     @Operation(summary = "Get a list of all rooms")
     public ResponseEntity<List<Room>> getAllRooms() {
         log.info("Request all rooms");
-        return ResponseEntity.ok(roomService.getAllRooms());
+        //TODO through dto class, dont use entity
+        List<Room> rooms = roomService.getAllRooms();
+        return ResponseEntity.ok(rooms);
     }
 
     @GetMapping("/{id}")
