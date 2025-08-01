@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Room Chat</title>
+    <link rel="stylesheet" href="room-style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+<body>
+<h2>Chat by Room</h2>
+
+<div id="room-select-wrapper">
+    <label for="roomSelect">Choose a room:</label>
+    <select id="roomSelect"></select>
+</div>
+
+<div id="messages" class="messages-box"></div>
+
+<div class="field">
+    <input type="text" id="inputMessage" placeholder="Type your message">
+    <button onclick="sendMessage()">Send</button>
+</div>
+
+<script src="room-script.js"></script>
+</body>
+</html>

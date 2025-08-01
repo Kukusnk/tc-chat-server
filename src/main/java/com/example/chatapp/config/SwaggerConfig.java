@@ -15,9 +15,7 @@ public class SwaggerConfig {
     public OpenAPI api() {
         return new OpenAPI()
                 .servers(
-                        List.of(
-                                new Server().url("https://localhost:8080")
-                        )
+                        List.of(new Server().url("https://localhost:8080"))
                 )
                 .info(
                         new Info().title("Team Challenge Chat API")

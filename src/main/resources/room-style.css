@@ -1,0 +1,101 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+h2 {
+    margin-bottom: 10px;
+}
+
+#room-select-wrapper {
+    margin-bottom: 15px;
+}
+
+select {
+    padding: 8px;
+    font-size: 16px;
+}
+
+.messages-box {
+    width: 600px;
+    min-width: 10px;
+    min-height: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+    background-color: white;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.message-bubble {
+    max-width: 60%;
+    min-width: 100px;
+    padding: 10px 15px;
+    border-radius: 15px;
+    margin: 5px 0;
+    display: inline-block;
+    position: relative;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.client {
+    align-self: flex-end;
+    background-color: #dcf8c6;
+    border-bottom-right-radius: 0;
+}
+
+.server {
+    align-self: flex-start;
+    background-color: #e6ecff;
+    border-bottom-left-radius: 0;
+}
+
+.message-bubble p {
+    margin: 0 0 5px 0;
+    word-wrap: break-word;
+}
+
+.message-bubble span {
+    font-size: 0.75em;
+    color: gray;
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+}
+
+.field {
+    margin-top: 15px;
+    min-width: 100px;
+    display: flex;
+    gap: 10px;
+    width: 600px;
+}
+
+input#inputMessage {
+    flex-grow: 1;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #2196f3;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #1976d2;
+}

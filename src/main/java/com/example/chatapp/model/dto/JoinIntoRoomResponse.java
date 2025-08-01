@@ -6,12 +6,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(description = "Room information")
-public class RoomDTO {
-    @Schema(description = "Room name", example = "general", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String name;
+@Builder
+@Schema(description = "Username when joining a room")
+public class JoinIntoRoomResponse {
+    @Schema(description = "User Name", example = "Bob", requiredMode = Schema.RequiredMode.REQUIRED)
+    private String username;
 }
