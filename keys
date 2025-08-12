@@ -1,0 +1,8 @@
+host = dpg-d1r4erbipnbc73f1k810-a
+port = 5432
+database = chat_db_o2yu
+isername = chat_db_o2yu_user
+password = t2odIeSjhZ3esnFcJ9hUEYRjFRIaUkzn
+internal url = postgresql://chat_db_o2yu_user:t2odIeSjhZ3esnFcJ9hUEYRjFRIaUkzn@dpg-d1r4erbipnbc73f1k810-a/chat_db_o2yu
+external url = postgresql://chat_db_o2yu_user:t2odIeSjhZ3esnFcJ9hUEYRjFRIaUkzn@dpg-d1r4erbipnbc73f1k810-a.frankfurt-postgres.render.com/chat_db_o2yu
+psql command = PGPASSWORD=t2odIeSjhZ3esnFcJ9hUEYRjFRIaUkzn psql -h dpg-d1r4erbipnbc73f1k810-a.frankfurt-postgres.render.com -U chat_db_o2yu_user chat_db_o2yu
