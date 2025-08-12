@@ -2,16 +2,12 @@ package com.example.chatapp.util;
 
 import com.example.chatapp.model.Message;
 import com.example.chatapp.model.Room;
+import com.example.chatapp.model.User;
 import com.example.chatapp.model.dto.MessageDTO;
 import com.example.chatapp.model.dto.RoomDTO;
-
-import java.util.List;
+import com.example.chatapp.model.dto.UserDTO;
 
 public class DevTools {
-
-    public static Long getLastMessageID(List<Message> messages) {
-        return messages.get(messages.size() - 1).getId();
-    }
 
     public static MessageDTO messageToDTO(Message message) {
         return new MessageDTO(
@@ -19,6 +15,18 @@ public class DevTools {
                 message.getContent(),
                 message.getTimestamp()
         );
+    }
+
+    public static UserDTO userToDTO(User user) {
+        return UserDTO.builder()
+                .email(user.getEmail())
+                .username(user.getUsername())
+                .password(user.getPassword())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .isEmailVerified(user.getIsEmailVerified())
+                .createdAt(user.getCreatedAt())
+                .build();
     }
 
     public static RoomDTO roomsToDTO(Room room) {
