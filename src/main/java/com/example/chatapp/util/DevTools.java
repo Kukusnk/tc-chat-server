@@ -3,9 +3,9 @@ package com.example.chatapp.util;
 import com.example.chatapp.model.Message;
 import com.example.chatapp.model.Room;
 import com.example.chatapp.model.User;
-import com.example.chatapp.model.dto.MessageDTO;
-import com.example.chatapp.model.dto.RoomDTO;
-import com.example.chatapp.model.dto.UserDTO;
+import com.example.chatapp.model.dto.message.MessageDTO;
+import com.example.chatapp.model.dto.room.RoomDTO;
+import com.example.chatapp.model.dto.user.UserDTO;
 
 public class DevTools {
 

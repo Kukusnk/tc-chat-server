@@ -1,6 +1,11 @@
 package com.example.chatapp.controller.websocket;
 
-import com.example.chatapp.model.dto.*;
+import com.example.chatapp.model.dto.message.MessageDTO;
+import com.example.chatapp.model.dto.message.SendMessageDTO;
+import com.example.chatapp.model.dto.websocket.JoinIntoRoomRequest;
+import com.example.chatapp.model.dto.websocket.JoinIntoRoomResponse;
+import com.example.chatapp.model.dto.websocket.TypingRequest;
+import com.example.chatapp.model.dto.websocket.TypingStatus;
 import com.example.chatapp.service.MessageService;
 import io.github.springwolf.bindings.stomp.annotations.StompAsyncOperationBinding;
 import io.github.springwolf.core.asyncapi.annotations.AsyncListener;

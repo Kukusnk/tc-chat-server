@@ -1,4 +1,4 @@
-package com.example.chatapp.model.dto;
+package com.example.chatapp.model.dto.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

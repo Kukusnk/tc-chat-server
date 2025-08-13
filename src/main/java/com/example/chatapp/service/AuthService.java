@@ -1,11 +1,13 @@
 package com.example.chatapp.service;
 
+import com.example.chatapp.handler.exception.UserEmailException;
+import com.example.chatapp.handler.exception.UserUsernameException;
 import com.example.chatapp.model.RefreshToken;
 import com.example.chatapp.model.User;
-import com.example.chatapp.model.dto.AuthResponse;
-import com.example.chatapp.model.dto.LoginRequest;
-import com.example.chatapp.model.dto.RefreshTokenRequest;
-import com.example.chatapp.model.dto.RegisterRequest;
+import com.example.chatapp.model.dto.auth.AuthResponse;
+import com.example.chatapp.model.dto.auth.LoginRequest;
+import com.example.chatapp.model.dto.auth.RegisterRequest;
+import com.example.chatapp.model.dto.refresh_token.RefreshTokenRequest;
 import com.example.chatapp.repository.UserRepository;
 import com.example.chatapp.util.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -34,10 +36,13 @@ public class AuthService {
 
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("Username already exists");
+            log.error("Username already exists");
+            throw new UserUsernameException("User with username '" + request.getUsername() + "' already exists");
         }
+
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already exists");
+            log.error("Email already exists");
+            throw new UserEmailException("User with email '" + request.getEmail() + "' already exists");
         }
 
         User user = User.builder()

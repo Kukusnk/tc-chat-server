@@ -1,7 +1,10 @@
 package com.example.chatapp.handler;
 
+import com.example.chatapp.handler.exception.BadRequestException;
 import com.example.chatapp.handler.exception.RoomNotFoundException;
 import com.example.chatapp.handler.exception.UserValidationException;
+import com.example.chatapp.handler.exception.VerificationException;
+import com.example.chatapp.model.dto.email_verification.VerificationResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -23,6 +26,17 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RoomNotFoundException.class)
     public ResponseEntity<String> handleRoomNotFound(RoomNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(VerificationException.class)
+    public ResponseEntity<String> handleVerificationException(VerificationException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<VerificationResponse> handleBadRequest(BadRequestException e) {
+        return ResponseEntity.badRequest()
+                .body(new VerificationResponse(e.getMessage(), false, false));
     }
 
     //    @ExceptionHandler(MethodArgumentNotValidException.class)

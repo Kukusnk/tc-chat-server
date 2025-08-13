@@ -47,3 +47,19 @@ spring:
   sql:
     init:
       mode: always
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${SMTP_USERNAME}
+    password: ${SMTP_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+app:
+  mail:
+    from: chat.app@chat.com
+    from-name: Chat App

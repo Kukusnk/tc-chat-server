@@ -1,8 +1,10 @@
 package com.example.chatapp.service;
 
 import com.example.chatapp.handler.exception.UserNotFoundException;
+import com.example.chatapp.handler.exception.VerificationException;
 import com.example.chatapp.model.User;
 import com.example.chatapp.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,31 +24,18 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-//    public void createUser(CreateUserDTO userDTO) {
-//
-//        if (userRepository.existsByUsername(userDTO.getUsername())) {
-//            log.error("Username already exists");
-//            throw new UserUsernameException("User with username '" + userDTO.getUsername() + "' already exists");
-//        }
-//
-//        if (userRepository.existsByEmail(userDTO.getEmail())) {
-//            log.error("Email already exists");
-//            throw new UserEmailException("User with email '" + userDTO.getEmail() + "' already exists");
-//        }
-//
-//        User user = User.builder()
-//                .username(userDTO.getUsername())
-//                .email(userDTO.getEmail())
-//                .password(passwordEncoder.encode(userDTO.getPassword()))
-//                .firstName("First Name")
-//                .lastName("Last Name")
-//                .createdAt(LocalDate.now())
-//                .isEmailVerified(false)
-//                .build();
-//
-//        userRepository.save(user);
-//        log.info("User created: {}", userDTO.getUsername());
-//    }
+    @Transactional
+    public void verifiedUserByEmail(String email) {
+        User user = getUserByEmailOrThrow(email);
+        if (!user.getIsEmailVerified()) {
+            user.setIsEmailVerified(true);
+        } else {
+            log.info("User already verified");
+            throw new VerificationException("Email " + email + " already verified");
+        }
+        userRepository.save(user);
+        log.info("User verified");
+    }
 
     public Optional<User> getUserByEmail(String email) {
         return userRepository.findByEmail(email);

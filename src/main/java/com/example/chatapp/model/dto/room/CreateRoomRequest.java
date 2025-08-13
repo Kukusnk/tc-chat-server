@@ -1,4 +1,4 @@
-package com.example.chatapp.model.dto;
+package com.example.chatapp.model.dto.room;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
