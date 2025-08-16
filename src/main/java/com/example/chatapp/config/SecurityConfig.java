@@ -67,6 +67,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(
                 List.of("http://localhost:63342",
+                        "https://chatproj-60hd.onrender.com",
                         "https://tc-chat-portal.onrender.com",
                         "http://localhost:4200",
                         "http://localhost:4201"));
