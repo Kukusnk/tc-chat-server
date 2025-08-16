@@ -13,6 +13,18 @@ import java.util.Optional;
 @Repository
 public interface EmailVerificationCodeRepository extends JpaRepository<EmailVerificationCode, Long> {
 
+    // Найти активный код определенного типа для email
+    Optional<EmailVerificationCode> findByEmailAndCodeAndCodeTypeAndIsUsedFalseAndExpiresAtAfter(
+            String email, String code, EmailVerificationCode.CodeType codeType, LocalDateTime now);
+
+    // Найти недавно отправленный код определенного типа
+    Optional<EmailVerificationCode> findByEmailAndCodeTypeAndCreatedAtAfter(
+            String email, EmailVerificationCode.CodeType codeType, LocalDateTime after);
+
+    @Modifying
+    @Query("UPDATE EmailVerificationCode e SET e.isUsed = true WHERE e.email = :email AND e.codeType = :codeType AND e.isUsed = false")
+    void markAllAsUsedByEmailAndType(@Param("email") String email, @Param("codeType") EmailVerificationCode.CodeType codeType);
+
     // Find the active code for email
     Optional<EmailVerificationCode> findByEmailAndCodeAndIsUsedFalseAndExpiresAtAfter(
             String email, String code, LocalDateTime now);

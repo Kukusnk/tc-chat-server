@@ -45,10 +45,39 @@ public class EmailService {
         }
     }
 
+    public void sendPasswordResetEmail(String toEmail, String code) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setFrom(fromEmail, fromName);
+            helper.setTo(toEmail);
+            helper.setSubject("Password reset");
+
+            String htmlContent = generatePasswordResetEmailContent(code);
+            helper.setText(htmlContent, true);
+
+            mailSender.send(message);
+            log.info("Password reset code sent to{}", toEmail);
+
+        } catch (Exception e) {
+            log.error("Error sending password reset email to {}: {}", toEmail, e.getMessage());
+            throw new RuntimeException("Failed to send password reset email", e);
+        }
+    }
+
     private String generateEmailContent(String code) {
         Context context = new Context();
         context.setVariable("code", code);
 
         return templateEngine.process("email-verification", context);
     }
+
+    private String generatePasswordResetEmailContent(String code) {
+        Context context = new Context();
+        context.setVariable("code", code);
+
+        return templateEngine.process("password-reset", context);
+    }
+
 }

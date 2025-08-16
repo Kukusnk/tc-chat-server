@@ -71,14 +71,14 @@ public class AuthService {
         User user;
         if (request.getUsernameOrEmail().matches(EMAIL_REGEXP)) {
             user = userRepository.findByEmail(request.getUsernameOrEmail())
-                    .orElseThrow(() -> new RuntimeException("Invalid credentials"));
+                    .orElseThrow(() -> new RuntimeException("Invalid credentials, email does not exist"));
         } else {
             user = userRepository.findByUsername(request.getUsernameOrEmail())
-                    .orElseThrow(() -> new RuntimeException("Invalid credentials"));
+                    .orElseThrow(() -> new RuntimeException("Invalid credentials, username does not exist"));
         }
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid credentials");
+            throw new RuntimeException("Invalid credentials, password does not match");
         }
 
         String accessToken = jwtUtil.generateToken(user.getUsername());

@@ -48,7 +48,7 @@ public class RefreshTokenService {
         }
         return token;
     }
-    
+
     public void deleteByUser(User user) {
         refreshTokenRepository.deleteByUser(user);
     }
@@ -56,6 +56,10 @@ public class RefreshTokenService {
     @Scheduled(fixedRate = 86400000)
     public void deleteExpiredTokens() {
         refreshTokenRepository.deleteByExpiryDateBefore(LocalDateTime.now());
+    }
+
+    public void deleteAllByUser(User user) {
+        refreshTokenRepository.deleteAllByUser(user);
     }
 
 }

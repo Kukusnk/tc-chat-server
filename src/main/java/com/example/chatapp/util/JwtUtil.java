@@ -26,6 +26,32 @@ public class JwtUtil {
         this.key = Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes(StandardCharsets.UTF_8));
     }
 
+    public String generateResetToken(String email) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + 10 * 60 * 1000); // 10 минут
+
+        return Jwts.builder()
+                .subject(email)
+                .issuedAt(now)
+                .expiration(expiryDate)
+                .signWith(key)
+                .claim("type", "reset")
+                .compact();
+    }
+
+    public boolean validateResetToken(String token) {
+        try {
+            Claims claims = getClaims(token);
+            return "reset".equals(claims.get("type", String.class)) && !isTokenExpired(token);
+        } catch (JwtException e) {
+            return false;
+        }
+    }
+
+    public String extractEmailFromResetToken(String token) {
+        return getClaims(token).getSubject();
+    }
+
     public String generateToken(String username) {
         return generateToken(username, jwtProperties.getExpiration());
     }

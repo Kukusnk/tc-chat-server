@@ -17,7 +17,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 
-import java.util.Collections;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -47,7 +47,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/auth/**", "/q/swagger-ui/**", "/q/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(AbstractHttpConfigurer::disable)
@@ -65,7 +65,7 @@ public class SecurityConfig {
 
     private CorsConfiguration getCorsConfiguration() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Collections.singletonList("http://localhost:63342"));
+        config.setAllowedOrigins(List.of("http://localhost:63342", "https://tc-chat-portal.onrender.com/"));
         config.addAllowedMethod(HttpMethod.OPTIONS);
         config.addAllowedMethod(HttpMethod.POST);
         config.addAllowedMethod(HttpMethod.PUT);

@@ -1,12 +1,16 @@
 package com.example.chatapp.model.dto.email_verification;
 
-import com.example.chatapp.model.dto.ApiResponse;
+import com.example.chatapp.model.dto.SimpleResponse;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class VerificationResponse extends ApiResponse {
+@Schema(name = "VerificationResponse", description = "Response after verifying the email")
+public class VerificationResponse extends SimpleResponse {
+
+    @Schema(description = "Indicates whether the email was successfully verified", example = "true")
     private boolean verified;
 
     public VerificationResponse(String message, boolean success, boolean verified) {

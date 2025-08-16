@@ -33,11 +33,21 @@ public class EmailVerificationCode {
     @Builder.Default
     private Boolean isUsed = false;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    @Builder.Default
+    private CodeType codeType = CodeType.EMAIL_VERIFICATION;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
+    }
+
+    public enum CodeType {
+        EMAIL_VERIFICATION,
+        PASSWORD_RESET
     }
 }

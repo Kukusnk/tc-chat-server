@@ -55,7 +55,7 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException("User with username '" + username + "' not found"));
     }
 
-    public boolean isEmailTaken(String email) {
+    public boolean isEmailExist(String email) {
         return userRepository.existsByEmail(email);
     }
 
@@ -63,4 +63,7 @@ public class UserService {
         return userRepository.existsByUsername(username);
     }
 
+    public void updatePasswordByEmail(String email, String encodedPassword) {
+        userRepository.updatePasswordByEmail(email, encodedPassword);
+    }
 }
