@@ -1,7 +1,7 @@
 package com.example.chatapp.controller.rest;
 
 import com.example.chatapp.handler.exception.RoomNotFoundException;
-import com.example.chatapp.model.dto.MessageDTO;
+import com.example.chatapp.model.dto.message.MessageDTO;
 import com.example.chatapp.service.MessageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

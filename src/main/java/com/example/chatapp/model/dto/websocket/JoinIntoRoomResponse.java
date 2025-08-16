@@ -1,4 +1,4 @@
-package com.example.chatapp.model.dto;
+package com.example.chatapp.model.dto.websocket;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Schema(description = "Username when joining a room")
-public class JoinIntoRoomRequest {
+public class JoinIntoRoomResponse {
     @Schema(description = "User Name", example = "Bob", requiredMode = Schema.RequiredMode.REQUIRED)
     private String username;
 }
