@@ -65,7 +65,11 @@ public class SecurityConfig {
 
     private CorsConfiguration getCorsConfiguration() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:63342", "https://tc-chat-portal.onrender.com/"));
+        config.setAllowedOrigins(
+                List.of("http://localhost:63342",
+                        "https://tc-chat-portal.onrender.com/",
+                        "http://localhost:4200/",
+                        "http://localhost:4201/"));
         config.addAllowedMethod(HttpMethod.OPTIONS);
         config.addAllowedMethod(HttpMethod.POST);
         config.addAllowedMethod(HttpMethod.PUT);
