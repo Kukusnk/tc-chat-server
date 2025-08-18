@@ -1,15 +1,10 @@
 package com.example.chatapp.controller.rest;
 
-import com.example.chatapp.model.dto.SimpleResponse;
 import com.example.chatapp.model.dto.auth.AuthResponse;
 import com.example.chatapp.model.dto.auth.LoginRequest;
 import com.example.chatapp.model.dto.auth.RegisterRequest;
-import com.example.chatapp.model.dto.email_verification.SendVerificationCodeRequest;
-import com.example.chatapp.model.dto.email_verification.VerificationResponse;
-import com.example.chatapp.model.dto.email_verification.VerifyEmailRequest;
 import com.example.chatapp.model.dto.refresh_token.RefreshTokenRequest;
 import com.example.chatapp.service.AuthService;
-import com.example.chatapp.service.EmailVerificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -24,18 +19,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 @Validated
 @Slf4j
-@Tag(name = "Email Verification", description = "API for authentication and email verification")
+@Tag(name = "Authentification API", description = "API for authentication: register, login, logout, refreshToken")
 public class AuthController {
 
     private final AuthService authService;
-    private final EmailVerificationService emailVerificationService;
+
 
     @Operation(
             summary = "Register user",
@@ -123,6 +121,12 @@ public class AuthController {
                                     @ExampleObject(name = "Username not found", value = "Invalid credentials, username does not exist"),
                                     @ExampleObject(name = "Wrong password", value = "Invalid credentials, password does not match")
                             })),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    name = "Unverified Email Error",
+                                    value = "Email verification failed: example@example.com is not verified"
+                            ))),
             @ApiResponse(responseCode = "405", description = "Method not allowed",
                     content = @Content(mediaType = "application/json",
                             examples = @ExampleObject(
@@ -199,97 +203,5 @@ public class AuthController {
             @Parameter(hidden = true) Authentication authentication) {
         authService.logout(authentication.getName());
         return ResponseEntity.ok("Logged out successfully");
-    }
-
-    /**
-     * Send an email verification code to the user
-     */
-    @Operation(
-            summary = "Send email verification code",
-            description = "Sends a verification code to the provided email address"
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Verification code sent",
-                    content = @Content(mediaType = "application/json",
-                            examples = @ExampleObject(
-                                    name = "Verification code sent",
-                                    value = "{ \"message\": \"Verification code sent to your email\", \"success\": true }"
-                            ))),
-            @ApiResponse(responseCode = "400", description = "Email already verified or invalid")
-    })
-    @PostMapping("/email-verification/send-code")
-    public ResponseEntity<SimpleResponse> sendCode(
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Email address for verification",
-                    required = true,
-                    content = @Content(
-                            schema = @Schema(implementation = SendVerificationCodeRequest.class),
-                            examples = @ExampleObject(
-                                    name = "Sample email request",
-                                    value = "{ \"email\": \"john@example.com\" }"
-                            )
-                    )
-            )
-            @Valid @RequestBody SendVerificationCodeRequest request) {
-        emailVerificationService.sendVerificationCode(request.getEmail());
-        return ResponseEntity.ok(new SimpleResponse("Verification code sent to your email", true));
-    }
-
-    /**
-     * Verify the email using the provided code
-     */
-    @Operation(
-            summary = "Verify email",
-            description = "Validates the verification code for the given email"
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Email successfully verified",
-                    content = @Content(mediaType = "application/json",
-                            examples = @ExampleObject(
-                                    name = "Email verified",
-                                    value = "{ \"message\": \"Email successfully confirmed\", \"success\": true, \"verified\": true }"
-                            ))),
-            @ApiResponse(responseCode = "400", description = "Invalid or expired verification code")
-    })
-    @PostMapping("/email-verification/verify")
-    public ResponseEntity<VerificationResponse> verifyCode(
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Email and verification code",
-                    required = true,
-                    content = @Content(
-                            schema = @Schema(implementation = VerifyEmailRequest.class),
-                            examples = @ExampleObject(
-                                    name = "Sample verification",
-                                    value = "{ \"email\": \"john@example.com\", \"code\": \"123456\" }"
-                            )
-                    )
-            )
-            @Valid @RequestBody VerifyEmailRequest request) {
-        boolean verified = emailVerificationService.verifyCode(request.getEmail(), request.getCode());
-        return ResponseEntity.ok(new VerificationResponse(
-                "Email successfully confirmed", true, verified));
-    }
-
-    /**
-     * Get statistics about email verifications
-     */
-    @Operation(
-            summary = "Get email verification stats",
-            description = "Returns verification statistics. If email is provided, returns stats only for that email"
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Statistics retrieved successfully",
-                    content = @Content(mediaType = "application/json",
-                            examples = @ExampleObject(
-                                    name = "Statistics example",
-                                    value = "{ \"totalSent\": 150, \"totalVerified\": 120, \"verificationRate\": 0.8 }"
-                            )))
-    })
-    @GetMapping("/email-verification/stats")
-    public ResponseEntity<?> getStats(
-            @Parameter(description = "Optional email filter", required = false,
-                    example = "john@example.com")
-            @RequestParam(required = false) String email) {
-        return ResponseEntity.ok(emailVerificationService.getVerificationStats(email));
     }
 }

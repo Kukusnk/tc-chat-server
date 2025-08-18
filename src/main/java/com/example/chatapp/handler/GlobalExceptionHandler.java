@@ -1,9 +1,6 @@
 package com.example.chatapp.handler;
 
-import com.example.chatapp.handler.exception.BadRequestException;
-import com.example.chatapp.handler.exception.RoomNotFoundException;
-import com.example.chatapp.handler.exception.UserValidationException;
-import com.example.chatapp.handler.exception.VerificationException;
+import com.example.chatapp.handler.exception.*;
 import com.example.chatapp.model.dto.email_verification.VerificationResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +14,11 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(UnverifiedEmailException.class)
+    public ResponseEntity<String> handleUnverifiedEmailException(UnverifiedEmailException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+    }
 
     @ExceptionHandler(UserValidationException.class)
     public ResponseEntity<String> handleUserUsernameException(UserValidationException e) {
