@@ -1,5 +1,6 @@
 package com.example.chatapp.service;
 
+import com.example.chatapp.handler.exception.UnverifiedEmailException;
 import com.example.chatapp.handler.exception.UserEmailException;
 import com.example.chatapp.handler.exception.UserUsernameException;
 import com.example.chatapp.model.RefreshToken;
@@ -79,6 +80,10 @@ public class AuthService {
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid credentials, password does not match");
+        }
+
+        if (!user.getIsEmailVerified()) {
+            throw new UnverifiedEmailException("Email verification failed: " + user.getEmail() + " is not verified");
         }
 
         String accessToken = jwtUtil.generateToken(user.getUsername());
