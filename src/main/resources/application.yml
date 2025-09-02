@@ -1,6 +1,12 @@
 server:
   port: 8080
 
+google:
+  drive:
+    credentials-path: credentials/team-challenge-chat-470408-f0287fce68a3.json
+    application-name: "Avatar Service"
+    folder-id: 1B9ZI9IZebmtFzrREXJbSylmwTypdrEmR
+
 jwt:
   secret: mySecretKey123456789012345678901234567890
   expiration: 86400 # 24 hours in seconds
@@ -58,8 +64,21 @@ spring:
           auth: true
           starttls:
             enable: true
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 5MB
+      max-request-size: 5MB
+
 
 app:
   mail:
     from: chat.app@chat.com
     from-name: Chat App
+
+logging:
+  level:
+    com.yourpackage: DEBUG
+    com.google.api: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"

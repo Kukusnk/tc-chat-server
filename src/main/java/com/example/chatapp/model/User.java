@@ -30,8 +30,11 @@ public class User {
     @NotBlank
     @Size(min = 8, message = "Password must be greater than or equal to 8")
     String password;
-    String firstName;
-    String lastName;
+
+    //    @Column(name = "avatar_url")
+//    private String avatarUrl;
+//    @Column(name = "avatar_file_id")
+//    private String avatarFileId;
     LocalDate createdAt;
     Boolean isEmailVerified;
 }

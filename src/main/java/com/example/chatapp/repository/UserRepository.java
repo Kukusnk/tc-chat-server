@@ -16,6 +16,18 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("UPDATE User u SET u.password = :password WHERE u.email = :email")
     void updatePasswordByEmail(@Param("email") String email, @Param("password") String password);
 
+    @Modifying
+    @Query("UPDATE User u SET u.password = :password WHERE u.username = :username")
+    void updatePasswordByUsername(@Param("username") String username, @Param("password") String password);
+
+    @Modifying
+    @Query("UPDATE User u SET u.email = :email WHERE u.username = :username")
+    void updateEmailByUsername(@Param("username") String username, @Param("email") String email);
+
+    @Modifying
+    @Query("UPDATE User u SET u.username = :new_username WHERE u.username = :username")
+    void updateUsernameByUsername(@Param("username") String username, @Param("new_username") String new_username);
+
     /**
      * Find a user by email     *
      *
@@ -79,4 +91,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @return boolean
      */
     boolean existsByUsernameIgnoreCase(String username);
+
 }

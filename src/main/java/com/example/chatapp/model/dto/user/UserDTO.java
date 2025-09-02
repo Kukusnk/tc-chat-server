@@ -1,9 +1,9 @@
 package com.example.chatapp.model.dto.user;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -14,18 +14,16 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Schema(name = "UserDTO", description = "User Dto")
 public class UserDTO {
     @NotBlank
-    @Max(value = 15)
-    @Min(value = 6)
+    @Size(min = 6, max = 15)
     String username;
     @Email(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
     String email;
     @NotBlank
-    @Min(value = 8)
+    @Size(min = 8)
     String password;
-    String firstName;
-    String lastName;
     LocalDate createdAt;
     Boolean isEmailVerified;
 }

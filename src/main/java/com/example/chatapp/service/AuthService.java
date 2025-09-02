@@ -50,8 +50,6 @@ public class AuthService {
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .firstName("First Name")
-                .lastName("Last Name")
                 .createdAt(LocalDate.now())
                 .isEmailVerified(false)
                 .build();

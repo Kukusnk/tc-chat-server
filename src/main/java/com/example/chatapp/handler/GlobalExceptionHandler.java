@@ -30,6 +30,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
+    @ExceptionHandler(UserUsernameException.class)
+    public ResponseEntity<String> handleUserUsernameException(UserUsernameException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(UserEmailException.class)
+    public ResponseEntity<String> handleUserEmailException(UserEmailException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
+
     @ExceptionHandler(VerificationException.class)
     public ResponseEntity<String> handleVerificationException(VerificationException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
@@ -39,6 +49,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<VerificationResponse> handleBadRequest(BadRequestException e) {
         return ResponseEntity.badRequest()
                 .body(new VerificationResponse(e.getMessage(), false, false));
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<String> handleUserNotFoundException(UserNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 
     //    @ExceptionHandler(MethodArgumentNotValidException.class)
