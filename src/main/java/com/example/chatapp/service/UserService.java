@@ -9,7 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @Service
@@ -17,12 +19,79 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final GoogleDriveService googleDriveService;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, GoogleDriveService googleDriveService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.googleDriveService = googleDriveService;
     }
+
+    public String uploadUserAvatar(String username, MultipartFile file) throws IOException {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Validate file
+        validateAvatarFile(file);
+
+        // Upload new avatar
+        String newAvatarUrl = googleDriveService.uploadAvatar(file, username);
+        String newFileId = extractFileIdFromUrl(newAvatarUrl);
+
+        // Delete old avatar if exists
+        if (user.getAvatarFileId() != null) {
+            try {
+                googleDriveService.deleteAvatar(user.getAvatarFileId());
+            } catch (Exception e) {
+                log.warn("Failed to delete old avatar: {}", e.getMessage());
+            }
+        }
+
+        // Update user
+        user.setAvatarUrl(newAvatarUrl);
+        user.setAvatarFileId(newFileId);
+        userRepository.save(user);
+
+        return newAvatarUrl;
+    }
+
+    public void deleteUserAvatar(String username) throws IOException {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (user.getAvatarFileId() != null) {
+            googleDriveService.deleteAvatar(user.getAvatarFileId());
+            user.setAvatarUrl(null);
+            user.setAvatarFileId(null);
+            userRepository.save(user);
+        }
+    }
+
+    private void validateAvatarFile(MultipartFile file) {
+        if (file.isEmpty()) {
+            throw new RuntimeException("File is empty");
+        }
+
+        // Check file size (5MB max)
+        if (file.getSize() > 5 * 1024 * 1024) {
+            throw new RuntimeException("File size exceeds 5MB limit");
+        }
+
+        // Check file type
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new RuntimeException("Only image files are allowed");
+        }
+    }
+
+    private String extractFileIdFromUrl(String driveUrl) {
+        if (driveUrl != null && driveUrl.contains("id=")) {
+            return driveUrl.substring(driveUrl.indexOf("id=") + 3);
+        }
+        return null;
+    }
+
 
     @Transactional
     public void verifiedUserByEmail(String email) {
