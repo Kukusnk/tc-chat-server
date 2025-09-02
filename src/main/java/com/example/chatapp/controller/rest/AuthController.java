@@ -55,8 +55,6 @@ public class AuthController {
             @ApiResponse(responseCode = "400", description = "Bad Request",
                     content = @Content(mediaType = "application/json",
                             examples = {
-                                    @ExampleObject(name = "Username exists", value = "User with username 'john_doe' already exists"),
-                                    @ExampleObject(name = "Email exists", value = "User with email 'john@example.com' already exists"),
                                     @ExampleObject(name = "Validation errors", value = "Username must be between 4 and 16, Password must be greater than or equal to 8"),
                                     @ExampleObject(name = "Wrong arguments", value = "Wrong argument: invalid data format")
                             })),
@@ -71,7 +69,13 @@ public class AuthController {
                             examples = @ExampleObject(
                                     name = "Unexpected error",
                                     value = "Internal error: NullPointerException"
-                            )))
+                            ))),
+            @ApiResponse(responseCode = "409", description = "Conflict",
+                    content = @Content(mediaType = "application/json",
+                            examples = {
+                                    @ExampleObject(name = "Username exists", value = "User with username 'BohdanTaran' already exists"),
+                                    @ExampleObject(name = "Email exists", value = "User with email 'john@example.com' already exists")
+                            }))
     })
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(

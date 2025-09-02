@@ -43,6 +43,10 @@ public interface EmailVerificationCodeRepository extends JpaRepository<EmailVeri
     @Query("DELETE FROM EmailVerificationCode e WHERE e.expiresAt < :now")
     void deleteExpiredCodes(@Param("now") LocalDateTime now);
 
+    Optional<EmailVerificationCode> findByEmailAndCodeAndCodeType(String email, String code, EmailVerificationCode.CodeType codeType);
+
+    Optional<EmailVerificationCode> findByEmailAndCodeTypeAndIsUsed(String email, EmailVerificationCode.CodeType codeType, boolean isUsed);
+
     // Statistics
     long countByEmail(String email);
 
