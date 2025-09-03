@@ -6,6 +6,8 @@ services:
       - "8080:8080"
     depends_on:
       - db
+    environment:
+      - GOOGLE_CREDENTIALS_JSON=${GOOGLE_CREDENTIALS_JSON}
     env_file:
       - .env
 
