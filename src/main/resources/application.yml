@@ -1,11 +1,15 @@
 server:
   port: 8080
 
-google:
-  drive:
-    credentials-path: credentials/team-challenge-chat-470408-f0287fce68a3.json
-    application-name: "Avatar Service"
-    folder-id: 1B9ZI9IZebmtFzrREXJbSylmwTypdrEmR
+#google:
+#  drive:
+#    credentials-path: credentials/team-challenge-chat-470408-f0287fce68a3.json
+#    application-name: "Avatar Service"
+#    folder-id: 1B9ZI9IZebmtFzrREXJbSylmwTypdrEmR
+
+gcp:
+  storage:
+    bucket: team-challenge-chat-470916.appspot.com
 
 jwt:
   secret: mySecretKey123456789012345678901234567890

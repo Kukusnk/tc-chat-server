@@ -101,10 +101,4 @@ public class EmailVerificationService {
 
         return stats;
     }
-
-    public boolean isEmailVerified(String email) {
-        return repository
-                .findByEmailAndCodeTypeAndIsUsed(email, EmailVerificationCode.CodeType.EMAIL_VERIFICATION, true)
-                .isPresent();
-    }
 }

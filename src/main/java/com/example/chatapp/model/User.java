@@ -31,6 +31,8 @@ public class User {
     @Size(min = 8, message = "Password must be greater than or equal to 8")
     String password;
 
+    @Column(name = "avatar_url")
+    private String avatarUrl;
     //    @Column(name = "avatar_url")
 //    private String avatarUrl;
 //    @Column(name = "avatar_file_id")

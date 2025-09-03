@@ -111,6 +111,27 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/com.google.cloud/google-cloud-storage -->
+        <dependency>
+            <groupId>com.google.cloud</groupId>
+            <artifactId>google-cloud-storage</artifactId>
+            <version>2.56.0</version>
+        </dependency>
+
+        <!-- Google App Engine API -->
+        <dependency>
+            <groupId>com.google.appengine</groupId>
+            <artifactId>appengine-api-1.0-sdk</artifactId>
+            <version>2.0.25</version>
+        </dependency>
+
+        <!-- Для работы с multipart файлами -->
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+            <version>1.5</version>
+        </dependency>
+
         <!--        &lt;!&ndash; https://mvnrepository.com/artifact/com.google.api-client/google-api-client &ndash;&gt;-->
         <!--        <dependency>-->
         <!--            <groupId>com.google.api-client</groupId>-->

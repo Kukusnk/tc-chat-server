@@ -1,10 +1,12 @@
 package com.example.chatapp.service;
 
 import com.example.chatapp.handler.exception.*;
+import com.example.chatapp.model.EmailVerificationCode;
 import com.example.chatapp.model.User;
 import com.example.chatapp.model.dto.auth.AccessToken;
 import com.example.chatapp.model.dto.auth.AuthResponse;
 import com.example.chatapp.model.dto.user.UserDTO;
+import com.example.chatapp.repository.EmailVerificationCodeRepository;
 import com.example.chatapp.repository.UserRepository;
 import com.example.chatapp.util.DevTools;
 import com.example.chatapp.util.JwtUtil;
@@ -22,14 +24,14 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
-    private final EmailVerificationService emailVerificationService;
+    private final EmailVerificationCodeRepository emailVerificationCodeRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, EmailVerificationService emailVerificationService) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, EmailVerificationCodeRepository emailVerificationCodeRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
-        this.emailVerificationService = emailVerificationService;
+        this.emailVerificationCodeRepository = emailVerificationCodeRepository;
     }
 
 //    public String uploadUserAvatar(String username, MultipartFile file) throws IOException {
@@ -121,7 +123,7 @@ public class UserService {
             throw new UserEmailException("User with email '" + newEmail + "' already exists");
         }
 
-        if (!emailVerificationService.isEmailVerified(newEmail)) {
+        if (!isEmailVerified(newEmail)) {
             throw new UnverifiedEmailException("Email verification failed: " + newEmail + " is not verified");
         }
 
@@ -134,6 +136,12 @@ public class UserService {
                 .refreshToken(refreshToken)
                 .tokenType("Bearer")
                 .build();
+    }
+
+    public boolean isEmailVerified(String email) {
+        return emailVerificationCodeRepository
+                .findByEmailAndCodeTypeAndIsUsed(email, EmailVerificationCode.CodeType.EMAIL_VERIFICATION, true)
+                .isPresent();
     }
 
     @Transactional
