@@ -2,13 +2,16 @@ package com.example.chatapp.controller.rest;
 
 import com.example.chatapp.model.Room;
 import com.example.chatapp.model.dto.room.CreateRoomRequest;
+import com.example.chatapp.model.dto.room.CreateRoomResponse;
 import com.example.chatapp.service.RoomService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,9 +27,10 @@ public class RoomController {
     @PostMapping
     @Operation(summary = "Create a new room")
     @ApiResponse(responseCode = "200", description = "Room successfully created")
-    public ResponseEntity<Room> createRoom(@Valid @RequestBody CreateRoomRequest request) {
+    public ResponseEntity<CreateRoomResponse> createRoom(@Valid @RequestBody CreateRoomRequest request,
+                                                         @Parameter(hidden = true) Authentication authentication) {
         log.info("Create a room with a name: {}", request.getName());
-        Room room = roomService.createRoom(request.getName());
+        CreateRoomResponse room = roomService.createRoom(request, authentication.getName());
         return ResponseEntity.ok(room);
     }
 
