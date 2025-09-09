@@ -5,6 +5,7 @@ import com.example.chatapp.handler.exception.RoomUniqueException;
 import com.example.chatapp.model.Room;
 import com.example.chatapp.model.dto.room.CreateRoomRequest;
 import com.example.chatapp.model.dto.room.CreateRoomResponse;
+import com.example.chatapp.model.dto.room.RoomListResponse;
 import com.example.chatapp.repository.RoomRepository;
 import com.example.chatapp.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -29,11 +31,12 @@ public class RoomService {
         if (request.getMemberLimit() == 0) {
             request.setMemberLimit(100);
         }
+        //TODO
         return new CreateRoomResponse();
     }
 
-    public List<Room> getAllRooms() {
-        return roomRepository.findAll();
+    public List<RoomListResponse> getAllRooms() {
+        return new ArrayList<>();
     }
 
     public Room getRoomById(Long id) {

@@ -3,6 +3,7 @@ package com.example.chatapp.controller.rest;
 import com.example.chatapp.model.Room;
 import com.example.chatapp.model.dto.room.CreateRoomRequest;
 import com.example.chatapp.model.dto.room.CreateRoomResponse;
+import com.example.chatapp.model.dto.room.RoomListResponse;
 import com.example.chatapp.service.RoomService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -36,10 +37,10 @@ public class RoomController {
 
     @GetMapping
     @Operation(summary = "Get a list of all rooms")
-    public ResponseEntity<List<Room>> getAllRooms() {
+    public ResponseEntity<List<RoomListResponse>> getAllRooms() {
         log.info("Request all rooms");
         //TODO through dto class, dont use entity
-        List<Room> rooms = roomService.getAllRooms();
+        List<RoomListResponse> rooms = roomService.getAllRooms();
         return ResponseEntity.ok(rooms);
     }
 
