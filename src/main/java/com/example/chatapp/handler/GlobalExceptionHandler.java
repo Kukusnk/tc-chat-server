@@ -30,6 +30,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
+    @ExceptionHandler(RoomUniqueException.class)
+    public ResponseEntity<String> handleRoomUniqueException(RoomUniqueException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
+
     @ExceptionHandler(UserUsernameException.class)
     public ResponseEntity<String> handleUserUsernameException(UserUsernameException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());

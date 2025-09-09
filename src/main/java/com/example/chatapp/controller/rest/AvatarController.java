@@ -138,25 +138,3 @@ public class AvatarController {
         return ResponseEntity.ok(response);
     }
 }
-
-//@RestController
-//@RequestMapping("/api/avatars")
-//public class AvatarController {
-//
-//    private final AvatarStorageService avatarStorageService;
-//
-//    public AvatarController(AvatarStorageService avatarStorageService) {
-//        this.avatarStorageService = avatarStorageService;
-//    }
-//
-//    @PostMapping("/{username}")
-//    public ResponseEntity<String> uploadAvatar(@PathVariable String username,
-//                                               @RequestParam("file") MultipartFile file) {
-//        try {
-//            String url = avatarStorageService.uploadAvatar(file, username);
-//            return ResponseEntity.ok(url);
-//        } catch (Exception e) {
-//            return ResponseEntity.internalServerError().body("Upload failed: " + e.getMessage());
-//        }
-//    }
-//}
