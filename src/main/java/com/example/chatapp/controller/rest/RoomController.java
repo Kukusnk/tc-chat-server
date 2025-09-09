@@ -30,13 +30,13 @@ public class RoomController {
     public ResponseEntity<CreateRoomResponse> createRoom(@Valid @RequestBody CreateRoomRequest request,
                                                          @Parameter(hidden = true) Authentication authentication) {
         log.info("Create a room with a name: {}", request.getName());
-        Room room = roomService.createRoom(request, authentication.getName());
+        CreateRoomResponse room = roomService.createRoom(request, authentication.getName());
         return ResponseEntity.ok(room);
     }
 
     @GetMapping
     @Operation(summary = "Get a list of all rooms")
-    public ResponseEntity<List<RoomListDTO>> getAllRooms() {
+    public ResponseEntity<List<Room>> getAllRooms() {
         log.info("Request all rooms");
         //TODO through dto class, dont use entity
         List<Room> rooms = roomService.getAllRooms();
