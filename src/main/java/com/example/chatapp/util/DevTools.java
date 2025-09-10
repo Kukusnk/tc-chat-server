@@ -25,7 +25,6 @@ public class DevTools {
                 .username(user.getUsername())
                 .password(user.getPassword())
                 .isEmailVerified(user.getIsEmailVerified())
-                .createdAt(user.getCreatedAt())
                 .build();
     }
 

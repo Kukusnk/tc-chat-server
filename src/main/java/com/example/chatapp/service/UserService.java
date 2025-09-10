@@ -197,4 +197,45 @@ public class UserService {
     public void updatePasswordByEmail(String email, String encodedPassword) {
         userRepository.updatePasswordByEmail(email, encodedPassword);
     }
+
+    public AuthResponse updateUser(UserDTO userData, String username) {
+        User user = getUserByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("User with username '" + username + "' not found"));
+        String newUsername = userData.getUsername();
+        String accessToken = null;
+        if (!user.getUsername().equals(newUsername)) {
+            if (isUsernameTaken(newUsername)) {
+                throw new UserUsernameException("User with username '" + newUsername + "' already exists");
+            }
+            user.setUsername(newUsername);
+            accessToken = jwtUtil.generateToken(newUsername);
+        }
+        if (!passwordEncoder.matches(userData.getPassword(), user.getPassword())) {
+            user.setPassword(passwordEncoder.encode(userData.getPassword()));
+        }
+
+        String newEmail = userData.getEmail();
+        String refreshToken = "";
+        if (!user.getEmail().equals(newEmail)) {
+            if (isEmailExist(newEmail)) {
+                throw new UserEmailException("User with email '" + newEmail + "' already exists");
+            }
+            if (!isEmailVerified(newEmail)) {
+                throw new UnverifiedEmailException("Email verification failed: " + newEmail + " is not verified");
+            }
+            user.setEmail(newEmail);
+            refreshToken = jwtUtil.generateResetToken(newEmail);
+            if (accessToken == null) {
+                accessToken = jwtUtil.generateToken(username);
+            }
+        }
+
+        userRepository.save(user);
+
+        return AuthResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .tokenType("Bearer")
+                .build();
+    }
 }
