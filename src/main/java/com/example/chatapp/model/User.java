@@ -33,10 +33,6 @@ public class User {
 
     @Column(name = "avatar_url")
     private String avatarUrl;
-    //    @Column(name = "avatar_url")
-//    private String avatarUrl;
-//    @Column(name = "avatar_file_id")
-//    private String avatarFileId;
     LocalDate createdAt;
     Boolean isEmailVerified;
 }

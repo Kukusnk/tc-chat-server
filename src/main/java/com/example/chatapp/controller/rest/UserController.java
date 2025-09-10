@@ -26,34 +26,6 @@ public class UserController {
 
     private final UserService userService;
 
-//    @PostMapping("/{username}/avatar")
-//    public ResponseEntity<?> uploadAvatar(
-//            @PathVariable String username,
-//            @RequestParam("file") MultipartFile file) {
-//        try {
-//            String avatarUrl = userService.uploadUserAvatar(username, file);
-//            return ResponseEntity.ok(Map.of(
-//                    "message", "Avatar uploaded successfully",
-//                    "avatarUrl", avatarUrl
-//            ));
-//        } catch (Exception e) {
-//            log.error("Error uploading avatar: {}", e.getMessage());
-//            return ResponseEntity.badRequest()
-//                    .body(Map.of("error", e.getMessage()));
-//        }
-//    }
-
-//    @DeleteMapping("/{username}/avatar")
-//    public ResponseEntity<?> deleteAvatar(@PathVariable String username) {
-//        try {
-//            userService.deleteUserAvatar(username);
-//            return ResponseEntity.ok(Map.of("message", "Avatar deleted successfully"));
-//        } catch (Exception e) {
-//            log.error("Error deleting avatar: {}", e.getMessage());
-//            return ResponseEntity.badRequest()
-//                    .body(Map.of("error", e.getMessage()));
-//        }
-//    }
 
     /**
      * Get current user's profile information
@@ -90,6 +62,58 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<UserDTO> getUserProfile(Authentication authentication) {
         return ResponseEntity.ok(userService.getUserDTOByUsernameOrThrow(authentication.getName()));
+    }
+
+    /**
+     * Update current user's data
+     */
+    @Operation(
+            summary = "Update user",
+            description = """
+                    Update the current user.
+                    
+                    Possible error responses:
+                    - 400: Validation errors (weak password, blank password, wrong old password), user not found
+                    - 401: Unauthorized
+                    - 403: Email verification failed
+                    - 405: Method not supported
+                    - 409: Conflict (username already exists, email already exists)
+                    - 500: Internal server error
+                    """
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "User updated, new access and refresh tokens returned",
+                    content = @Content(mediaType = "text/plain",
+                            schema = @Schema(implementation = AccessToken.class))),
+            @ApiResponse(responseCode = "400", description = "Bad request",
+                    content = @Content(mediaType = "application/json",
+                            examples = {
+                                    @ExampleObject(name = "Validation error", value = "Password must be at least 8 characters long"),
+                                    @ExampleObject(name = "Wrong old password", value = "Current password is incorrect"),
+                                    @ExampleObject(name = "User not found", value = "User with username '\" + username + \"' not found")
+                            })),
+            @ApiResponse(responseCode = "401", description = "Unauthorized",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = "Full authentication is required to access this resource"))),
+            @ApiResponse(responseCode = "403", description = "Email verification failed",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = "Email verification failed: \" + newEmail@gmail.com + \" is not verified"))),
+            @ApiResponse(responseCode = "405", description = "Method not allowed",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = "The method is not supported: POST"))),
+            @ApiResponse(responseCode = "409", description = "Conflict",
+                    content = @Content(mediaType = "application/json",
+                            examples = {
+                                    @ExampleObject(value = "User with username 'BohdanTaran' already exists"),
+                                    @ExampleObject(value = "User with email 'john@example.com' already exists")
+                            })),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = "Internal error: NullPointerException")))
+    })
+    @PutMapping("/me")
+    public ResponseEntity<AuthResponse> updateUser(@RequestBody UserDTO userData, Authentication authentication) {
+        return ResponseEntity.ok(userService.updateUser(userData, authentication.getName()));
     }
 
     /**

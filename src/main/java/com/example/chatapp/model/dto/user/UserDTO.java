@@ -7,8 +7,6 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDate;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,6 +22,5 @@ public class UserDTO {
     @NotBlank
     @Size(min = 8)
     String password;
-    LocalDate createdAt;
     Boolean isEmailVerified;
 }

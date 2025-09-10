@@ -22,7 +22,6 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    //todo security of websocket channels and the rest api itself
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
