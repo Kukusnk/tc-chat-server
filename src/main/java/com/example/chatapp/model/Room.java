@@ -22,8 +22,7 @@ public class Room {
     private Long id;
     @NotBlank
     @Column(unique = true)
-    //TODO уточнить
-    @Size(min = 2, max = 50)
+    @Size(min = 5, max = 128)
     private String name;
     private String description;
     @ManyToMany
