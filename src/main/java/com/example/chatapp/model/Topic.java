@@ -6,17 +6,22 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
-@Table(name = "category")
+@Table(name = "topic")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Topic {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(unique = true, nullable = false)
     @NotEmpty
     private String name;
     private String description;
+
+    @ManyToMany(mappedBy = "topics")
+    private List<Room> rooms;
 }

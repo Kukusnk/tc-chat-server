@@ -26,7 +26,7 @@ public class Room {
     private String name;
     private String description;
     @ManyToMany
-    private List<Topic> category;
+    private List<Topic> topics;
     @NotBlank
     private Long userId;
     @NotBlank
