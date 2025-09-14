@@ -35,5 +35,14 @@ public class User {
     private String avatarUrl;
     LocalDate createdAt;
     Boolean isEmailVerified;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    Role role;
+
+    public enum Role {
+        ADMIN,
+        USER
+    }
 }
 

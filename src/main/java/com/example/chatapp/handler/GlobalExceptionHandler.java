@@ -93,6 +93,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
+    @ExceptionHandler(TopicUniqueException.class)
+    public ResponseEntity<String> handleTopicUniqueException(TopicUniqueException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleOtherExceptions(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

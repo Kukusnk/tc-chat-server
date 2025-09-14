@@ -105,7 +105,8 @@ public class UserService {
             throw new UserUsernameException("User with username '" + newUsername + "' already exists");
         }
         userRepository.updateUsernameByUsername(username, newUsername);
-        String token = jwtUtil.generateToken(username);
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException("User with username '" + username + "' not found"));
+        String token = jwtUtil.generateToken(username, user.getRole().name());
         return AccessToken.builder()
                 .accessToken(token)
                 .tokenType("Bearer")
@@ -128,7 +129,8 @@ public class UserService {
         }
 
         userRepository.updateEmailByUsername(username, newEmail);
-        String accessToken = jwtUtil.generateToken(username);
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException("User with username '" + username + "' not found"));
+        String accessToken = jwtUtil.generateToken(username, user.getRole().name());
         String refreshToken = jwtUtil.generateResetToken(newEmail);
 
         return AuthResponse.builder()
@@ -208,7 +210,7 @@ public class UserService {
                 throw new UserUsernameException("User with username '" + newUsername + "' already exists");
             }
             user.setUsername(newUsername);
-            accessToken = jwtUtil.generateToken(newUsername);
+            accessToken = jwtUtil.generateToken(newUsername, user.getRole().name());
         }
         if (!passwordEncoder.matches(userData.getPassword(), user.getPassword())) {
             user.setPassword(passwordEncoder.encode(userData.getPassword()));
@@ -226,7 +228,7 @@ public class UserService {
             user.setEmail(newEmail);
             refreshToken = jwtUtil.generateResetToken(newEmail);
             if (accessToken == null) {
-                accessToken = jwtUtil.generateToken(username);
+                accessToken = jwtUtil.generateToken(username, user.getRole().name());
             }
         }
 

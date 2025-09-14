@@ -52,15 +52,15 @@ public class JwtUtil {
         return getClaims(token).getSubject();
     }
 
-    public String generateToken(String username) {
-        return generateToken(username, jwtProperties.getExpiration());
+    public String generateToken(String username, String role) {
+        return generateToken(username, jwtProperties.getExpiration(), role);
     }
 
-    public String generateTestToken(String username) {
-        return generateToken(username, jwtProperties.getTestExpiration());
+    public String generateTestToken(String username, String role) {
+        return generateToken(username, jwtProperties.getTestExpiration(), role);
     }
 
-    public String generateToken(String username, Long expiration) {
+    public String generateToken(String username, Long expiration, String role) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expiration * 1000);
 
@@ -69,6 +69,7 @@ public class JwtUtil {
                 .issuedAt(now)
                 .expiration(expiryDate)
                 .signWith(key)
+                .claim("role", role)
                 .compact();
     }
 

@@ -3,6 +3,7 @@ package com.example.chatapp.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import java.util.List;
 @Entity
 @Table(name = "topic")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Topic {

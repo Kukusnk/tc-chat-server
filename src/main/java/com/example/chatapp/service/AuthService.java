@@ -52,11 +52,12 @@ public class AuthService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .createdAt(LocalDate.now())
                 .isEmailVerified(false)
+                .role(User.Role.USER)
                 .build();
 
         user = userRepository.save(user);
 
-        String accessToken = jwtUtil.generateToken(user.getUsername());
+        String accessToken = jwtUtil.generateToken(user.getUsername(), user.getRole().name());
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
 
         return AuthResponse.builder()
@@ -84,7 +85,7 @@ public class AuthService {
             throw new UnverifiedEmailException("Email verification failed: " + user.getEmail() + " is not verified");
         }
 
-        String accessToken = jwtUtil.generateToken(user.getUsername());
+        String accessToken = jwtUtil.generateToken(user.getUsername(), user.getRole().name());
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
 
         return AuthResponse.builder()
@@ -99,7 +100,7 @@ public class AuthService {
                 .map(refreshTokenService::verifyExpiration)
                 .map(RefreshToken::getUser)
                 .map(user -> {
-                    String accessToken = jwtUtil.generateToken(user.getUsername());
+                    String accessToken = jwtUtil.generateToken(user.getUsername(), user.getRole().name());
                     return AuthResponse.builder()
                             .accessToken(accessToken)
                             .refreshToken(request.getRefreshToken())
