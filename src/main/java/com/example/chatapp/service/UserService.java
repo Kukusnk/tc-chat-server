@@ -106,7 +106,7 @@ public class UserService {
         }
         userRepository.updateUsernameByUsername(username, newUsername);
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException("User with username '" + username + "' not found"));
-        String token = jwtUtil.generateToken(username, user.getRole().name());
+        String token = jwtUtil.generateToken(username, user.getRoles());
         return AccessToken.builder()
                 .accessToken(token)
                 .tokenType("Bearer")
@@ -130,7 +130,7 @@ public class UserService {
 
         userRepository.updateEmailByUsername(username, newEmail);
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException("User with username '" + username + "' not found"));
-        String accessToken = jwtUtil.generateToken(username, user.getRole().name());
+        String accessToken = jwtUtil.generateToken(username, user.getRoles());
         String refreshToken = jwtUtil.generateResetToken(newEmail);
 
         return AuthResponse.builder()
@@ -210,7 +210,7 @@ public class UserService {
                 throw new UserUsernameException("User with username '" + newUsername + "' already exists");
             }
             user.setUsername(newUsername);
-            accessToken = jwtUtil.generateToken(newUsername, user.getRole().name());
+            accessToken = jwtUtil.generateToken(newUsername, user.getRoles());
         }
         if (!passwordEncoder.matches(userData.getPassword(), user.getPassword())) {
             user.setPassword(passwordEncoder.encode(userData.getPassword()));
@@ -228,7 +228,7 @@ public class UserService {
             user.setEmail(newEmail);
             refreshToken = jwtUtil.generateResetToken(newEmail);
             if (accessToken == null) {
-                accessToken = jwtUtil.generateToken(username, user.getRole().name());
+                accessToken = jwtUtil.generateToken(username, user.getRoles());
             }
         }
 

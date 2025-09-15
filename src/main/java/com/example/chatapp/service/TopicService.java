@@ -41,11 +41,11 @@ public class TopicService {
                 });
     }
 
-    private Topic getTopicById(Long id) {
-        return topicRepository.findById(id)
+    private Topic getTopicByName(String name) {
+        return topicRepository.findByName(name)
                 .orElseGet(() -> {
-                    log.warn("Topic with id {} not found", id);
-                    throw new TopicNotFoundException("Topic with id '" + id + "' not found");
+                    log.warn("Topic with name {} not found", name);
+                    throw new TopicNotFoundException("Topic with name '" + name + "' not found");
                 });
     }
 
@@ -59,11 +59,11 @@ public class TopicService {
         return DevTools.topicsToDTO(savedTopic);
     }
 
-    public TopicDTO updateTopic(Long id, TopicDTO topicDTO) {
-        log.info("Updating topic {}, to {}", id, topicDTO);
-        Topic topic = getTopicById(id);
+    public TopicDTO updateTopic(String name, TopicDTO topicDTO) {
+        log.info("Updating topic {}, to {}", name, topicDTO);
+        Topic topic = getTopicByName(name);
 
-        validateUniqueName(topicDTO.getName(), id);
+        validateUniqueName(topicDTO.getName(), topic.getId());
 
         topic.setName(topicDTO.getName());
         topic.setDescription(topicDTO.getDescription());
@@ -72,19 +72,19 @@ public class TopicService {
         return DevTools.topicsToDTO(savedTopic);
     }
 
-    public void deleteTopicById(Long id) {
-        log.info("Deleting topic by id={}", id);
-        Topic topic = getTopicById(id);
+    public void deleteTopic(String name) {
+        log.info("Deleting topic by name={}", name);
+        Topic topic = getTopicByName(name);
 
         topicRepository.delete(topic);
     }
 
-    public TopicDTO patchTopic(Long id, TopicDTO topicDTO) {
-        log.info("Patching topic {}, to {}", id, topicDTO);
-        Topic topic = getTopicById(id);
+    public TopicDTO patchTopic(String name, TopicDTO topicDTO) {
+        log.info("Patching topic {}, to {}", name, topicDTO);
+        Topic topic = getTopicByName(name);
 
         if (topicDTO.getName() != null && !topicDTO.getName().isBlank()) {
-            validateUniqueName(topicDTO.getName(), id);
+            validateUniqueName(topicDTO.getName(), topic.getId());
             topic.setName(topicDTO.getName());
         }
         if (topicDTO.getDescription() != null) {

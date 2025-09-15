@@ -8,6 +8,8 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -36,13 +38,12 @@ public class User {
     LocalDate createdAt;
     Boolean isEmailVerified;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    Role role;
-
-    public enum Role {
-        ADMIN,
-        USER
-    }
+    @ManyToMany
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    Set<Role> roles = new HashSet<>();
 }
 

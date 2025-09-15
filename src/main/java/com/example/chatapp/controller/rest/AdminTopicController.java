@@ -63,7 +63,7 @@ public class AdminTopicController {
     }
 
 
-    @PutMapping("/{id}")
+    @PutMapping
     @Operation(
             summary = "Full topic update",
             description = """
@@ -89,20 +89,20 @@ public class AdminTopicController {
                     content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "404", description = "Topic not found",
                     content = @Content(mediaType = "application/json",
-                            examples = @ExampleObject(name = "Not found", value = "Topic with id '1' not found"))),
+                            examples = @ExampleObject(name = "Not found", value = "Topic with name 'Java' not found"))),
             @ApiResponse(responseCode = "409", description = "Conflict",
                     content = @Content(mediaType = "application/json",
                             examples = @ExampleObject(name = "Conflict Error", value = "Topic named 'Java' already exists"))),
             @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content(mediaType = "application/json"))
     })
-    public ResponseEntity<TopicDTO> updateTopic(@PathVariable Long id,
+    public ResponseEntity<TopicDTO> updateTopic(@RequestParam String name,
                                                 @RequestBody @Valid TopicDTO topicDTO) {
-        TopicDTO topic = topicService.updateTopic(id, topicDTO);
+        TopicDTO topic = topicService.updateTopic(name, topicDTO);
         return ResponseEntity.ok(topic);
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping
     @Operation(
             summary = "Partial topic update",
             description = """
@@ -128,24 +128,24 @@ public class AdminTopicController {
                     content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "404", description = "Topic not found",
                     content = @Content(mediaType = "application/json",
-                            examples = @ExampleObject(name = "Not found", value = "Topic with id '1' not found"))),
+                            examples = @ExampleObject(name = "Not found", value = "Topic with name 'Java' not found"))),
             @ApiResponse(responseCode = "409", description = "Conflict",
                     content = @Content(mediaType = "application/json",
                             examples = @ExampleObject(name = "Conflict Error", value = "Topic named 'Java' already exists"))),
             @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content(mediaType = "application/json"))
     })
-    public ResponseEntity<TopicDTO> patchTopic(@PathVariable Long id,
+    public ResponseEntity<TopicDTO> patchTopic(@RequestParam String name,
                                                @RequestBody TopicDTO topicDTO) {
-        TopicDTO updated = topicService.patchTopic(id, topicDTO);
+        TopicDTO updated = topicService.patchTopic(name, topicDTO);
         return ResponseEntity.ok(updated);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping
     @Operation(
             summary = "Delete topic",
             description = """
-                Deletes an existing topic by its id.
+                Deletes an existing topic by its name.
                 
                 Possible error responses:
                 - 403: Forbidden
@@ -159,12 +159,12 @@ public class AdminTopicController {
                     content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "404", description = "Topic not found",
                     content = @Content(mediaType = "application/json",
-                            examples = @ExampleObject(name = "Not found", value = "Topic with id '1' not found"))),
+                            examples = @ExampleObject(name = "Not found", value = "Topic with name 'Java' not found"))),
             @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content(mediaType = "application/json"))
     })
-    public ResponseEntity<Void> deleteTopic(@PathVariable Long id) {
-        topicService.deleteTopicById(id);
+    public ResponseEntity<Void> deleteTopic(@RequestParam String name) {
+        topicService.deleteTopic(name);
         return ResponseEntity.noContent().build();
     }
 }

@@ -1,5 +1,6 @@
 package com.example.chatapp.service;
 
+import com.example.chatapp.handler.exception.RoleNotFoundException;
 import com.example.chatapp.handler.exception.UnverifiedEmailException;
 import com.example.chatapp.handler.exception.UserEmailException;
 import com.example.chatapp.handler.exception.UserUsernameException;
@@ -9,6 +10,7 @@ import com.example.chatapp.model.dto.auth.AuthResponse;
 import com.example.chatapp.model.dto.auth.LoginRequest;
 import com.example.chatapp.model.dto.auth.RegisterRequest;
 import com.example.chatapp.model.dto.refresh_token.RefreshTokenRequest;
+import com.example.chatapp.repository.RoleRepository;
 import com.example.chatapp.repository.UserRepository;
 import com.example.chatapp.util.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -25,14 +28,16 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final RefreshTokenService refreshTokenService;
+    private final RoleRepository roleRepository;
     private final static String EMAIL_REGEXP = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
 
     @Autowired
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, RefreshTokenService refreshTokenService) {
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, RefreshTokenService refreshTokenService, RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
         this.refreshTokenService = refreshTokenService;
+        this.roleRepository = roleRepository;
     }
 
     public AuthResponse register(RegisterRequest request) {
@@ -52,12 +57,13 @@ public class AuthService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .createdAt(LocalDate.now())
                 .isEmailVerified(false)
-                .role(User.Role.USER)
+                .roles(Set.of(roleRepository.findByName("USER")
+                        .orElseThrow(() -> new RoleNotFoundException("Role USER not found"))))
                 .build();
 
         user = userRepository.save(user);
 
-        String accessToken = jwtUtil.generateToken(user.getUsername(), user.getRole().name());
+        String accessToken = jwtUtil.generateToken(user.getUsername(), user.getRoles());
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
 
         return AuthResponse.builder()
@@ -85,7 +91,7 @@ public class AuthService {
             throw new UnverifiedEmailException("Email verification failed: " + user.getEmail() + " is not verified");
         }
 
-        String accessToken = jwtUtil.generateToken(user.getUsername(), user.getRole().name());
+        String accessToken = jwtUtil.generateToken(user.getUsername(), user.getRoles());
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
 
         return AuthResponse.builder()
@@ -100,7 +106,7 @@ public class AuthService {
                 .map(refreshTokenService::verifyExpiration)
                 .map(RefreshToken::getUser)
                 .map(user -> {
-                    String accessToken = jwtUtil.generateToken(user.getUsername(), user.getRole().name());
+                    String accessToken = jwtUtil.generateToken(user.getUsername(), user.getRoles());
                     return AuthResponse.builder()
                             .accessToken(accessToken)
                             .refreshToken(request.getRefreshToken())
