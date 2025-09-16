@@ -38,4 +38,11 @@ public class DevTools {
                 .description(topic.getDescription())
                 .build();
     }
+
+    public static Topic DTOToTopic(TopicDTO topicDTO) {
+        return Topic.builder()
+                .name(topicDTO.getName())
+                .description(topicDTO.getDescription())
+                .build();
+    }
 }

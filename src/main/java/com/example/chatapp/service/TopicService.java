@@ -1,6 +1,8 @@
 package com.example.chatapp.service;
 
 import com.example.chatapp.handler.exception.TopicNotFoundException;
+import com.example.chatapp.handler.exception.TopicUniqueException;
+import com.example.chatapp.model.Topic;
 import com.example.chatapp.model.dto.topic.TopicDTO;
 import com.example.chatapp.repository.TopicRepository;
 import com.example.chatapp.util.DevTools;
@@ -30,13 +32,66 @@ public class TopicService {
                 .toList();
     }
 
-    public TopicDTO getTopicById(Long id) {
-        log.info("Fetching topic by id={}", id);
-        return topicRepository.findById(id)
-                .map(DevTools::topicsToDTO)
-                .orElseThrow(() -> {
-                    log.warn("Topic not found: id={}", id);
-                    return new TopicNotFoundException("Topic not found: " + id);
+    private void validateUniqueName(String name, Long excludeId) {
+        topicRepository.findByName(name)
+                .filter(topic -> !topic.getId().equals(excludeId))
+                .ifPresent(t -> {
+                    log.warn("Topic already exists: {}", name);
+                    throw new TopicUniqueException("Topic named '" + name + "' already exists");
                 });
+    }
+
+    private Topic getTopicByName(String name) {
+        return topicRepository.findByName(name)
+                .orElseGet(() -> {
+                    log.warn("Topic with name {} not found", name);
+                    throw new TopicNotFoundException("Topic with name '" + name + "' not found");
+                });
+    }
+
+    public TopicDTO createTopic(TopicDTO topicDTO) {
+        log.info("Creating topic {}", topicDTO);
+        Topic topic = DevTools.DTOToTopic(topicDTO);
+
+        validateUniqueName(topic.getName(), null);
+
+        Topic savedTopic = topicRepository.save(topic);
+        return DevTools.topicsToDTO(savedTopic);
+    }
+
+    public TopicDTO updateTopic(String name, TopicDTO topicDTO) {
+        log.info("Updating topic {}, to {}", name, topicDTO);
+        Topic topic = getTopicByName(name);
+
+        validateUniqueName(topicDTO.getName(), topic.getId());
+
+        topic.setName(topicDTO.getName());
+        topic.setDescription(topicDTO.getDescription());
+
+        Topic savedTopic = topicRepository.save(topic);
+        return DevTools.topicsToDTO(savedTopic);
+    }
+
+    public void deleteTopic(String name) {
+        log.info("Deleting topic by name={}", name);
+        Topic topic = getTopicByName(name);
+
+        topicRepository.delete(topic);
+    }
+
+    public TopicDTO patchTopic(String name, TopicDTO topicDTO) {
+        log.info("Patching topic {}, to {}", name, topicDTO);
+        Topic topic = getTopicByName(name);
+
+        if (topicDTO.getName() != null && !topicDTO.getName().isBlank()) {
+            validateUniqueName(topicDTO.getName(), topic.getId());
+            topic.setName(topicDTO.getName());
+        }
+        if (topicDTO.getDescription() != null) {
+            topic.setDescription(topicDTO.getDescription());
+        }
+
+        Topic savedTopic = topicRepository.save(topic);
+        return DevTools.topicsToDTO(savedTopic);
     }
 }

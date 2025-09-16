@@ -1,6 +1,7 @@
 package com.example.chatapp.util;
 
 import com.example.chatapp.config.JwtProperties;
+import com.example.chatapp.model.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -13,6 +14,8 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 @Component
 @Slf4j
@@ -52,15 +55,19 @@ public class JwtUtil {
         return getClaims(token).getSubject();
     }
 
-    public String generateToken(String username) {
-        return generateToken(username, jwtProperties.getExpiration());
+    public String generateToken(String username, Set<Role> roles) {
+        return generateToken(username, jwtProperties.getExpiration(), roles);
     }
 
-    public String generateTestToken(String username) {
-        return generateToken(username, jwtProperties.getTestExpiration());
+    public String generateTestToken(String username, Set<Role> roles) {
+        return generateToken(username, jwtProperties.getTestExpiration(), roles);
     }
 
-    public String generateToken(String username, Long expiration) {
+    public String generateToken(String username, Long expiration, Set<Role> roles) {
+        List<String> rolesNames = roles.stream()
+                .map(Role::getName)
+                .toList();
+
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expiration * 1000);
 
@@ -69,6 +76,7 @@ public class JwtUtil {
                 .issuedAt(now)
                 .expiration(expiryDate)
                 .signWith(key)
+                .claim("roles", rolesNames)
                 .compact();
     }
 
