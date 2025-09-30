@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RoomRepository extends JpaRepository<Room, Long> {
-    int countByUserId(Long userId);
+    int countByOwnerId(Long ownerId);
 
     boolean existsByName(String name);
 }

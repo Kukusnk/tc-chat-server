@@ -35,14 +35,12 @@ public class DevTools {
     public static TopicDTO topicsToDTO(Topic topic) {
         return TopicDTO.builder()
                 .name(topic.getName())
-                .description(topic.getDescription())
                 .build();
     }
 
     public static Topic DTOToTopic(TopicDTO topicDTO) {
         return Topic.builder()
                 .name(topicDTO.getName())
-                .description(topicDTO.getDescription())
                 .build();
     }
 }

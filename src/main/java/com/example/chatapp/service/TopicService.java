@@ -66,7 +66,6 @@ public class TopicService {
         validateUniqueName(topicDTO.getName(), topic.getId());
 
         topic.setName(topicDTO.getName());
-        topic.setDescription(topicDTO.getDescription());
 
         Topic savedTopic = topicRepository.save(topic);
         return DevTools.topicsToDTO(savedTopic);
@@ -77,21 +76,5 @@ public class TopicService {
         Topic topic = getTopicByName(name);
 
         topicRepository.delete(topic);
-    }
-
-    public TopicDTO patchTopic(String name, TopicDTO topicDTO) {
-        log.info("Patching topic {}, to {}", name, topicDTO);
-        Topic topic = getTopicByName(name);
-
-        if (topicDTO.getName() != null && !topicDTO.getName().isBlank()) {
-            validateUniqueName(topicDTO.getName(), topic.getId());
-            topic.setName(topicDTO.getName());
-        }
-        if (topicDTO.getDescription() != null) {
-            topic.setDescription(topicDTO.getDescription());
-        }
-
-        Topic savedTopic = topicRepository.save(topic);
-        return DevTools.topicsToDTO(savedTopic);
     }
 }
