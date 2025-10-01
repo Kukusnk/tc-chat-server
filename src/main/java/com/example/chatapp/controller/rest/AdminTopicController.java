@@ -65,9 +65,9 @@ public class AdminTopicController {
 
     @PutMapping
     @Operation(
-            summary = "Full topic update",
+            summary = "Topic update",
             description = """
-                Updates all fields of an existing topic.
+                Updates an existing topic.
                 
                 Possible error responses:
                 - 400: Validation errors
@@ -79,7 +79,7 @@ public class AdminTopicController {
                 """
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Topic fully updated successfully",
+            @ApiResponse(responseCode = "200", description = "Topic updated successfully",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = TopicDTO.class))),
             @ApiResponse(responseCode = "400", description = "Bad request",
@@ -100,45 +100,6 @@ public class AdminTopicController {
                                                 @RequestBody @Valid TopicDTO topicDTO) {
         TopicDTO topic = topicService.updateTopic(name, topicDTO);
         return ResponseEntity.ok(topic);
-    }
-
-    @PatchMapping
-    @Operation(
-            summary = "Partial topic update",
-            description = """
-                Updates only provided fields of an existing topic.
-                
-                Possible error responses:
-                - 400: Validation errors
-                - 403: Forbidden
-                - 404: Topic not found
-                - 405: Method not supported
-                - 409: Conflict
-                - 500: Internal server error
-                """
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Topic partially updated successfully",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = TopicDTO.class))),
-            @ApiResponse(responseCode = "400", description = "Bad request",
-                    content = @Content(mediaType = "application/json",
-                            examples = @ExampleObject(name = "Validation error", value = "Name must not be blank"))),
-            @ApiResponse(responseCode = "403", description = "Forbidden",
-                    content = @Content(mediaType = "application/json")),
-            @ApiResponse(responseCode = "404", description = "Topic not found",
-                    content = @Content(mediaType = "application/json",
-                            examples = @ExampleObject(name = "Not found", value = "Topic with name 'Java' not found"))),
-            @ApiResponse(responseCode = "409", description = "Conflict",
-                    content = @Content(mediaType = "application/json",
-                            examples = @ExampleObject(name = "Conflict Error", value = "Topic named 'Java' already exists"))),
-            @ApiResponse(responseCode = "500", description = "Internal server error",
-                    content = @Content(mediaType = "application/json"))
-    })
-    public ResponseEntity<TopicDTO> patchTopic(@RequestParam String name,
-                                               @RequestBody TopicDTO topicDTO) {
-        TopicDTO updated = topicService.patchTopic(name, topicDTO);
-        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping

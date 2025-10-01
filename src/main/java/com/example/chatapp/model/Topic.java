@@ -22,7 +22,6 @@ public class Topic {
     @Column(unique = true, nullable = false)
     @NotEmpty
     private String name;
-    private String description;
 
     @ManyToMany(mappedBy = "topics")
     private List<Room> rooms;
