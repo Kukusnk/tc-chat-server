@@ -1,6 +1,7 @@
 package com.example.chatapp.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -9,6 +10,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -25,21 +28,27 @@ public class Room {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotBlank
-    @Column(unique = true)
     @Size(min = 5, max = 128)
     private String name;
+    @Size(max = 1000)
     private String description;
     @ManyToMany
+    @NotNull
     private List<Topic> topics;
 
     @Enumerated(EnumType.STRING)
     private RoomType type; //SYSTEM, DEFAULT
 
     @OneToMany(mappedBy = "room")
-    private List<Message> messages;
+    @Builder.Default
+    private List<Message> messages = new ArrayList<>();
 
-    private Long ownerId;
+    @ManyToOne
+    private User owner;
     @NotNull
+    @Max(100)
     private Long memberLimit;
-    private List<Long> membersId;
+    @ManyToMany
+    private List<User> members;
+    private LocalDateTime createdAt;
 }

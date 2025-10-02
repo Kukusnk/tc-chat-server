@@ -15,6 +15,11 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(RoomOwnershipLimitExceededException.class)
+    public ResponseEntity<String> handleRoomOwnershipLimitExceededException(RoomOwnershipLimitExceededException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(UnverifiedEmailException.class)
     public ResponseEntity<String> handleUnverifiedEmailException(UnverifiedEmailException e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
@@ -30,6 +35,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
+    @Deprecated
     @ExceptionHandler(RoomUniqueException.class)
     public ResponseEntity<String> handleRoomUniqueException(RoomUniqueException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
