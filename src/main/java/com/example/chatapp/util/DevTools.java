@@ -34,6 +34,7 @@ public class DevTools {
 
     public static TopicDTO topicsToDTO(Topic topic) {
         return TopicDTO.builder()
+                .id(topic.getId())
                 .name(topic.getName())
                 .build();
     }

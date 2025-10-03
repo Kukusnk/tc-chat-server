@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Schema(name = "TopicDTO", description = "Topic Dto")
 public class TopicDTO {
+    private Long id;
     @NotBlank(message = "Name must not be blank")
     private String name;
 }

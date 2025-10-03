@@ -10,13 +10,20 @@ import com.example.chatapp.model.User;
 import com.example.chatapp.model.dto.room.CreateRoomRequest;
 import com.example.chatapp.model.dto.room.CreateRoomResponse;
 import com.example.chatapp.model.dto.room.RoomListResponse;
+import com.example.chatapp.model.dto.room.RoomSearchResponse;
 import com.example.chatapp.repository.RoomRepository;
 import com.example.chatapp.repository.TopicRepository;
 import com.example.chatapp.repository.UserRepository;
+import com.example.chatapp.specification.RoomSpecifications;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -86,5 +93,54 @@ public class RoomService {
         User user = userRepository.findByUsername(authentication.getName())
                 .orElseThrow(() -> new UserNotFoundException("User not found: " + authentication.getName()));
         return roomRepository.countByOwner(user) < MAX_ROOMS_PER_USER;
+    }
+
+    public Page<RoomSearchResponse> searchRooms(String search,
+                                                List<Long> topicIds,
+                                                boolean joined,
+                                                Pageable pageable,
+                                                Authentication authentication)
+    {
+        Specification<Room> spec = buildSpecification(search, topicIds, pageable);
+
+        if (joined && authentication != null) {
+            User user = userRepository.findByUsername(authentication.getName())
+                    .orElseThrow(() -> new UserNotFoundException("User not found: " + authentication.getName()));
+            spec = spec.and(RoomSpecifications.hasMember(user.getId()));
+        }
+
+        Pageable cleanedPageable = buildCleanedPageable(pageable);
+
+        return roomRepository.findAll(spec, cleanedPageable)
+                .map(RoomSearchResponse::fromEntity);
+    }
+
+    private Specification<Room> buildSpecification(String search, List<Long> topicIds, Pageable pageable) {
+        Specification<Room> spec = RoomSpecifications.hasSearchWord(search)
+                .and(RoomSpecifications.hasTopics(topicIds));
+
+        for (Sort.Order order : pageable.getSort()) {
+            if (order.getProperty().equals("membersCount")) {
+                spec = spec.and(RoomSpecifications.orderByMembersCount(order.getDirection()));
+            }
+        }
+
+        return spec;
+    }
+
+    private Pageable buildCleanedPageable(Pageable pageable) {
+        Sort sortDefault = Sort.unsorted();
+
+        for (Sort.Order order : pageable.getSort()) {
+            if (!order.getProperty().equals("membersCount")) {
+                sortDefault = sortDefault.and(Sort.by(order));
+            }
+        }
+
+        return PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                sortDefault
+        );
     }
 }

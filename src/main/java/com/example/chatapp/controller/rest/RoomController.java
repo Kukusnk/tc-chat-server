@@ -5,6 +5,7 @@ import com.example.chatapp.model.Room;
 import com.example.chatapp.model.dto.room.CreateRoomRequest;
 import com.example.chatapp.model.dto.room.CreateRoomResponse;
 import com.example.chatapp.model.dto.room.RoomListResponse;
+import com.example.chatapp.model.dto.room.RoomSearchResponse;
 import com.example.chatapp.service.RoomService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -12,10 +13,13 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +30,7 @@ import java.util.List;
 @RequestMapping("/api/rooms")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name = "Room API", description = "API for managing chat rooms")
 public class RoomController {
 
     private final RoomService roomService;
@@ -34,7 +39,7 @@ public class RoomController {
     @Operation(
             summary = "Create a new chat room",
             description = """
-                    Creates a new chat room with the provided parameters. 
+                    Creates a new chat room with the provided parameters.
                     - User can create up to 5 chat rooms. 
                     - Chat room name must be unique (5–128 characters). 
                     - Description is optional (up to 1000 characters). 
@@ -83,5 +88,54 @@ public class RoomController {
     public ResponseEntity<Room> getRoomById(@PathVariable Long id) {
         log.info("Search for a room by ID: {}", id);
         return ResponseEntity.ok(roomService.getRoomById(id));
+    }
+
+    @GetMapping("/search")
+    @Operation(
+            summary = "Search chat rooms",
+            description = """
+                Searches for chat rooms based on provided filters:
+                - Search by room name, description, or topic name.
+                - Filter by one or multiple topics (all specified topics must match).
+                - Optionally return only rooms where the authenticated user is a member (joined=true).
+                - Supports sorting by creation date, name, and number of participants.
+                - Supports pagination.
+                
+                Pagination parameters:
+                - `page` (default = 0): Page number (0-based).
+                - `size` (default = 20): Number of results per page.
+                
+                Sorting parameter:
+                - `sort` (can be repeated): Format is `property,(asc|desc)`.
+                  Examples:
+                  - `sort=name,asc`
+                  - `sort=createdAt,desc`
+                  - `sort=membersCount,desc`
+                """
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Search results successfully returned",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = RoomSearchResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request parameters", content = @Content),
+            @ApiResponse(responseCode = "403", description = "User is not authenticated", content = @Content)
+    })
+    public Page<RoomSearchResponse> searchRooms(
+            @Parameter(description = "Search word for room name, description, or topic name")
+            @RequestParam(required = false) String search,
+
+            @Parameter(description = "Filter by topic IDs (all must be present)")
+            @RequestParam(required = false) List<Long> topics,
+
+            @Parameter(description = "If true, only rooms joined by the authenticated user will be returned")
+            @RequestParam(required = false, defaultValue = "false") boolean joined,
+
+            @Parameter(description = "Pagination and sorting parameters.")
+            Pageable pageable,
+
+            @Parameter(hidden = true)
+            Authentication authentication
+    ) {
+        return roomService.searchRooms(search, topics, joined, pageable, authentication);
     }
 }
