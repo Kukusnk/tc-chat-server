@@ -6,6 +6,7 @@ import com.example.chatapp.model.Topic;
 import com.example.chatapp.model.User;
 import com.example.chatapp.model.dto.message.MessageDTO;
 import com.example.chatapp.model.dto.room.RoomDTO;
+import com.example.chatapp.model.dto.topic.CreateTopicDTO;
 import com.example.chatapp.model.dto.topic.TopicDTO;
 import com.example.chatapp.model.dto.user.UserDTO;
 
@@ -39,7 +40,7 @@ public class DevTools {
                 .build();
     }
 
-    public static Topic DTOToTopic(TopicDTO topicDTO) {
+    public static Topic DTOToTopic(CreateTopicDTO topicDTO) {
         return Topic.builder()
                 .name(topicDTO.getName())
                 .build();
