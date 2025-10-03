@@ -2,6 +2,7 @@ package com.example.chatapp.handler;
 
 import com.example.chatapp.handler.exception.*;
 import com.example.chatapp.model.dto.email_verification.VerificationResponse;
+import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -9,6 +10,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.stream.Collectors;
 
@@ -107,6 +109,29 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RoleNotFoundException.class)
     public ResponseEntity<String> handleRoleNotFound(RoleNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<String> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+        String paramName = ex.getName();
+        String invalidValue = ex.getValue() != null ? ex.getValue().toString() : "null";
+        String expectedType = ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "unknown";
+
+        String errorMessage = String.format(
+                "Invalid parameter format: parameter=%s, invalid value=%s, expected type=%s",
+                paramName, invalidValue, expectedType
+        );
+
+        return ResponseEntity.badRequest().body(errorMessage);
+    }
+
+    @ExceptionHandler(PropertyReferenceException.class)
+    public ResponseEntity<String> handlePropertyReference(PropertyReferenceException ex) {
+        String errorMessage = String.format(
+                "Invalid sort property: '%s'.",
+                ex.getPropertyName()
+        );
+        return ResponseEntity.badRequest().body(errorMessage);
     }
 
     @ExceptionHandler(Exception.class)

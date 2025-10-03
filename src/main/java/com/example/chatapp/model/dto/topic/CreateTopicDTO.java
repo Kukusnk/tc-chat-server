@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Schema(name = "TopicDTO", description = "Topic Dto")
-public class TopicDTO {
-    private Long id;
+@Schema(name = "CreateTopicDTO", description = "DTO for creating a new topic")
+public class CreateTopicDTO {
+
     @NotBlank(message = "Name must not be blank")
     private String name;
 }
