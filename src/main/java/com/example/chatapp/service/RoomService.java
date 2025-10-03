@@ -103,7 +103,7 @@ public class RoomService {
     {
         Specification<Room> spec = buildSpecification(search, topicIds, pageable);
 
-        if (joined && authentication != null) {
+        if (joined) {
             User user = userRepository.findByUsername(authentication.getName())
                     .orElseThrow(() -> new UserNotFoundException("User not found: " + authentication.getName()));
             spec = spec.and(RoomSpecifications.hasMember(user.getId()));
