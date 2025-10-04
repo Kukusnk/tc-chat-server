@@ -1,42 +1,72 @@
 package com.example.chatapp.service;
 
-import jakarta.mail.internet.MimeMessage;
-import lombok.RequiredArgsConstructor;
+import com.sendgrid.Method;
+import com.sendgrid.Request;
+import com.sendgrid.Response;
+import com.sendgrid.SendGrid;
+import com.sendgrid.helpers.mail.Mail;
+import com.sendgrid.helpers.mail.objects.Content;
+import com.sendgrid.helpers.mail.objects.Email;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class EmailService {
 
-    private final JavaMailSender mailSender;
-    private final TemplateEngine templateEngine;
+    //private final JavaMailSender mailSender;
+    private final SpringTemplateEngine templateEngine;
 
-    @Value("${app.mail.from:chat.app@chat.com}")
+    private final SendGrid sendGrid;
+
+    @Value("${sendgrid.from.email:chat.app@chat.com}")
     private String fromEmail;
 
-    @Value("${app.mail.from-name:Chat App}")
+    @Value("${sendgrid.from.name:Chat App}")
     private String fromName;
+
+    public EmailService(SpringTemplateEngine templateEngine, @Value("${sendgrid.api-key}") String apiKey) {
+        this.templateEngine = templateEngine;
+        this.sendGrid = new SendGrid(apiKey);
+    }
 
     public void sendVerificationEmail(String toEmail, String code) {
         try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-
-            helper.setFrom(fromEmail, fromName);
-            helper.setTo(toEmail);
-            helper.setSubject("Email address confirmation");
+//            MimeMessage message = mailSender.createMimeMessage();
+//            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+//
+//            helper.setFrom(fromEmail, fromName);
+//            helper.setTo(toEmail);
+//            helper.setSubject("Email address confirmation");
+//
+//            String htmlContent = generateEmailContent(code);
+//            helper.setText(htmlContent, true);
+//
+//            mailSender.send(message);
+//            log.info("Verification code sent to {}", toEmail);
+            Email from = new Email(fromEmail, fromName);
+            Email to = new Email(toEmail);
+            String subject = "Email address confirmation";
 
             String htmlContent = generateEmailContent(code);
-            helper.setText(htmlContent, true);
+            Content content = new Content("text/html", htmlContent);  // HTML из Thymeleaf
 
-            mailSender.send(message);
+            Mail mail = new Mail(from, subject, to, content);
+
+            Request request = new Request();
+            request.setMethod(Method.POST);
+            request.setEndpoint("mail/send");
+            request.setBody(mail.build());
+
+            Response response = sendGrid.api(request);
+            if (response.getStatusCode() >= 400) {  // Ошибка от SendGrid
+                log.error("SendGrid error: Status {}, Body: {}", response.getStatusCode(), response.getBody());
+                throw new RuntimeException("Failed to send email via SendGrid");
+            }
+
             log.info("Verification code sent to {}", toEmail);
 
         } catch (Exception e) {
@@ -47,18 +77,39 @@ public class EmailService {
 
     public void sendPasswordResetEmail(String toEmail, String code) {
         try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-
-            helper.setFrom(fromEmail, fromName);
-            helper.setTo(toEmail);
-            helper.setSubject("Password reset");
+//            MimeMessage message = mailSender.createMimeMessage();
+//            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+//
+//            helper.setFrom(fromEmail, fromName);
+//            helper.setTo(toEmail);
+//            helper.setSubject("Password reset");
+//
+//            String htmlContent = generatePasswordResetEmailContent(code);
+//            helper.setText(htmlContent, true);
+//
+//            mailSender.send(message);
+//            log.info("Password reset code sent to{}", toEmail);
+            Email from = new Email(fromEmail, fromName);
+            Email to = new Email(toEmail);
+            String subject = "Password reset";
 
             String htmlContent = generatePasswordResetEmailContent(code);
-            helper.setText(htmlContent, true);
+            Content content = new Content("text/html", htmlContent);  // HTML из Thymeleaf
 
-            mailSender.send(message);
-            log.info("Password reset code sent to{}", toEmail);
+            Mail mail = new Mail(from, subject, to, content);
+
+            Request request = new Request();
+            request.setMethod(Method.POST);
+            request.setEndpoint("mail/send");
+            request.setBody(mail.build());
+
+            Response response = sendGrid.api(request);
+            if (response.getStatusCode() >= 400) {
+                log.error("SendGrid error: Status {}, Body: {}", response.getStatusCode(), response.getBody());
+                throw new RuntimeException("Failed to send email via SendGrid");
+            }
+
+            log.info("Password reset code sent to {}", toEmail);
 
         } catch (Exception e) {
             log.error("Error sending password reset email to {}: {}", toEmail, e.getMessage());

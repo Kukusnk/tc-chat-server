@@ -136,6 +136,12 @@
             <version>1.5</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.sendgrid</groupId>
+            <artifactId>sendgrid-java</artifactId>
+            <version>4.10.2</version>
+        </dependency>
+
         <!--        &lt;!&ndash; https://mvnrepository.com/artifact/com.google.api-client/google-api-client &ndash;&gt;-->
         <!--        <dependency>-->
         <!--            <groupId>com.google.api-client</groupId>-->
