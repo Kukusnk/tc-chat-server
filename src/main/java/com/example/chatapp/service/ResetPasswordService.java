@@ -89,44 +89,10 @@ public class ResetPasswordService {
                         email, code, EmailVerificationCode.CodeType.PASSWORD_RESET, now)
                 .orElseThrow(() -> new BadRequestException("Invalid or expired password reset code"));
 
-        log.info("Password reset code successfully verified for{}", email);
+        log.info("Password reset code successfully verified for {}", email);
         return true;
     }
 
-    /**
-     * Step 3: Reset password with code verification
-     */
-//    public void resetPassword(String email, String code, String newPassword) {
-//        LocalDateTime now = LocalDateTime.now();
-//
-//        EmailVerificationCode resetCode = codeRepository
-//                .findByEmailAndCodeAndCodeTypeAndIsUsedFalseAndExpiresAtAfter(
-//                        email, code, EmailVerificationCode.CodeType.PASSWORD_RESET, now)
-//                .orElseThrow(() -> new BadRequestException("Invalid or expired password reset code"));
-//
-//        if (!userService.isEmailExist(email)) {
-//            throw new UserNotFoundException("User not found");
-//        }
-//
-//        try {
-//            User user = userService.getUserByEmailOrThrow(email);
-//
-//            String encodedPassword = passwordEncoder.encode(newPassword);
-//            userService.updatePasswordByEmail(email, encodedPassword);
-//
-//            resetCode.setIsUsed(true);
-//            codeRepository.save(resetCode);
-//
-//            // IMPORTANT: Invalidate all active user tokens
-//            refreshTokenService.deleteAllByUser(user);
-//
-//            log.info("Password successfully reset for the user {}", email);
-//
-//        } catch (Exception e) {
-//            log.error("Password reset error for {}: {}", email, e.getMessage());
-//            throw new BadRequestException("Failed to reset the password");
-//        }
-//    }
     public void resetPassword(String email, String newPassword) {
         try {
             String encodedPassword = passwordEncoder.encode(newPassword);

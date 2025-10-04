@@ -57,28 +57,33 @@ spring:
   sql:
     init:
       mode: always
-  mail:
-    host: smtp.sendgrid.net
-    port: 587
-    username: ${SMTP_SENDGRID_USERNAME}
-    password: ${SMTP_SENDGRID_PASSWORD}
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
+  #  mail:
+  #    host: smtp.sendgrid.net
+  #    port: 587
+  #    username: ${SMTP_SENDGRID_USERNAME}
+  #    password: ${SMTP_SENDGRID_PASSWORD}
+  #    properties:
+  #      mail:
+  #        smtp:
+  #          auth: true
+  #          starttls:
+  #            enable: true
   servlet:
     multipart:
       enabled: true
       max-file-size: 5MB
       max-request-size: 5MB
+sendgrid:
+  api-key: ${SENDGRID_API_KEY}
+  from:
+    email: chat.team.challange.app@gmail.com
+    name: Chat App
 
 
-app:
-  mail:
-    from: chat.team.challange.app@gmail.com
-    from-name: Chat App
+#app:
+#  mail:
+#    from: chat.team.challange.app@gmail.com
+#    from-name: Chat App
 
 logging:
   level:
