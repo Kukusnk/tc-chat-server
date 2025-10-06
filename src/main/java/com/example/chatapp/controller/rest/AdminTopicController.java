@@ -1,5 +1,6 @@
 package com.example.chatapp.controller.rest;
 
+import com.example.chatapp.model.dto.topic.CreateTopicDTO;
 import com.example.chatapp.model.dto.topic.TopicDTO;
 import com.example.chatapp.service.TopicService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -57,7 +58,7 @@ public class AdminTopicController {
             @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content(mediaType = "application/json"))
     })
-    public ResponseEntity<TopicDTO> createTopic(@RequestBody @Valid TopicDTO topicDTO) {
+    public ResponseEntity<TopicDTO> createTopic(@RequestBody @Valid CreateTopicDTO topicDTO) {
         TopicDTO topic = topicService.createTopic(topicDTO);
         return new ResponseEntity<>(topic, HttpStatus.CREATED);
     }
@@ -97,7 +98,7 @@ public class AdminTopicController {
                     content = @Content(mediaType = "application/json"))
     })
     public ResponseEntity<TopicDTO> updateTopic(@RequestParam String name,
-                                                @RequestBody @Valid TopicDTO topicDTO) {
+                                                @RequestBody @Valid CreateTopicDTO topicDTO) {
         TopicDTO topic = topicService.updateTopic(name, topicDTO);
         return ResponseEntity.ok(topic);
     }

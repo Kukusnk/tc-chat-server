@@ -3,6 +3,7 @@ package com.example.chatapp.service;
 import com.example.chatapp.handler.exception.TopicNotFoundException;
 import com.example.chatapp.handler.exception.TopicUniqueException;
 import com.example.chatapp.model.Topic;
+import com.example.chatapp.model.dto.topic.CreateTopicDTO;
 import com.example.chatapp.model.dto.topic.TopicDTO;
 import com.example.chatapp.repository.TopicRepository;
 import com.example.chatapp.util.DevTools;
@@ -49,7 +50,7 @@ public class TopicService {
                 });
     }
 
-    public TopicDTO createTopic(TopicDTO topicDTO) {
+    public TopicDTO createTopic(CreateTopicDTO topicDTO) {
         log.info("Creating topic {}", topicDTO);
         Topic topic = DevTools.DTOToTopic(topicDTO);
 
@@ -59,7 +60,7 @@ public class TopicService {
         return DevTools.topicsToDTO(savedTopic);
     }
 
-    public TopicDTO updateTopic(String name, TopicDTO topicDTO) {
+    public TopicDTO updateTopic(String name, CreateTopicDTO topicDTO) {
         log.info("Updating topic {}, to {}", name, topicDTO);
         Topic topic = getTopicByName(name);
 

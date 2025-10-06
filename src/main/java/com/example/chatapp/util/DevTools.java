@@ -4,6 +4,7 @@ import com.example.chatapp.model.Message;
 import com.example.chatapp.model.Topic;
 import com.example.chatapp.model.User;
 import com.example.chatapp.model.dto.message.MessageDTO;
+import com.example.chatapp.model.dto.topic.CreateTopicDTO;
 import com.example.chatapp.model.dto.topic.TopicDTO;
 import com.example.chatapp.model.dto.user.UserDTO;
 
@@ -28,11 +29,12 @@ public class DevTools {
 
     public static TopicDTO topicsToDTO(Topic topic) {
         return TopicDTO.builder()
+                .id(topic.getId())
                 .name(topic.getName())
                 .build();
     }
 
-    public static Topic DTOToTopic(TopicDTO topicDTO) {
+    public static Topic DTOToTopic(CreateTopicDTO topicDTO) {
         return Topic.builder()
                 .name(topicDTO.getName())
                 .build();

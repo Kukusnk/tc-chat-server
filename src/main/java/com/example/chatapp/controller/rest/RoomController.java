@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,7 @@ import java.util.List;
 @RequestMapping("/api/rooms")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name = "Room API", description = "API for managing chat rooms")
 public class RoomController {
 
     private final RoomService roomService;
@@ -101,6 +103,55 @@ public class RoomController {
     public ResponseEntity<RoomDetailsDTO> getRoomById(@PathVariable @Parameter(description = "Room ID") Long id) {
         log.info("Search for a room by ID: {}", id);
         return ResponseEntity.ok(roomService.getRoomById(id));
+    }
+
+    @GetMapping("/search")
+    @Operation(
+            summary = "Search chat rooms",
+            description = """
+                Searches for chat rooms based on provided filters:
+                - Search by room name, description, or topic name.
+                - Filter by one or multiple topics (all specified topics must match).
+                - Optionally return only rooms where the authenticated user is a member (joined=true).
+                - Supports sorting by creation date, name, and number of participants.
+                - Supports pagination.
+                
+                Pagination parameters:
+                - `page` (default = 0): Page number (0-based).
+                - `size` (default = 20): Number of results per page.
+                
+                Sorting parameter:
+                - `sort` (can be repeated): Format is `property,(asc|desc)`.
+                  Examples:
+                  - `sort=name,asc`
+                  - `sort=createdAt,desc`
+                  - `sort=membersCount,desc`
+                """
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Search results successfully returned",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = RoomSearchResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request parameters", content = @Content),
+            @ApiResponse(responseCode = "403", description = "User is not authenticated", content = @Content)
+    })
+    public Page<RoomSearchResponse> searchRooms(
+            @Parameter(description = "Search word for room name, description, or topic name")
+            @RequestParam(required = false) String search,
+
+            @Parameter(description = "Filter by topic IDs (all must be present)")
+            @RequestParam(required = false) List<Long> topics,
+
+            @Parameter(description = "If true, only rooms joined by the authenticated user will be returned")
+            @RequestParam(required = false, defaultValue = "false") boolean joined,
+
+            @Parameter(description = "Pagination and sorting parameters.")
+            Pageable pageable,
+
+            @Parameter(hidden = true)
+            Authentication authentication
+    ) {
+        return roomService.searchRooms(search, topics, joined, pageable, authentication);
     }
 
     @DeleteMapping("/{id}")
