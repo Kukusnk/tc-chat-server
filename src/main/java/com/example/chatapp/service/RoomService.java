@@ -9,6 +9,7 @@ import com.example.chatapp.model.Topic;
 import com.example.chatapp.model.User;
 import com.example.chatapp.model.dto.room.CreateRoomRequest;
 import com.example.chatapp.model.dto.room.CreateRoomResponse;
+import com.example.chatapp.model.dto.room.RoomDTO;
 import com.example.chatapp.model.dto.room.RoomListResponse;
 import com.example.chatapp.repository.RoomRepository;
 import com.example.chatapp.repository.TopicRepository;
@@ -75,10 +76,10 @@ public class RoomService {
         return new ArrayList<>();
     }
 
-    @Deprecated
-    public Room getRoomById(Long id) {
-        return roomRepository.findById(id)
-                .orElseThrow(() -> new RoomNotFoundException("Кімната не знайдена: " + id));
+    public RoomDTO getRoomById(Long id) {
+        log.info("Get room by id - {}", id);
+        Room room = roomRepository.findById(id).orElseThrow(() -> new RoomNotFoundException("Room id=" + id + " not found"));
+        return RoomDTO.fromEntity(room);
     }
 
     @Transactional
@@ -86,5 +87,24 @@ public class RoomService {
         User user = userRepository.findByUsername(authentication.getName())
                 .orElseThrow(() -> new UserNotFoundException("User not found: " + authentication.getName()));
         return roomRepository.countByOwner(user) < MAX_ROOMS_PER_USER;
+    }
+
+    @Transactional
+    public void deleteRoomById(Long id) {
+        log.info("Delete room by id - {}", id);
+        roomRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void joinToRoom(Long id, Authentication authentication) {
+        User user = userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new UserNotFoundException("User not found: " + authentication.getName()));
+
+        Room room = roomRepository.findById(id)
+                .map(r -> {
+                    r.addMember(user);
+                    return roomRepository.save(r);
+                })
+                .orElseThrow(() -> new RoomNotFoundException("Room id=" + id + " not found"));
     }
 }

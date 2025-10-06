@@ -1,9 +1,9 @@
 package com.example.chatapp.controller.rest;
 
 import com.example.chatapp.handler.exception.RoomOwnershipLimitExceededException;
-import com.example.chatapp.model.Room;
 import com.example.chatapp.model.dto.room.CreateRoomRequest;
 import com.example.chatapp.model.dto.room.CreateRoomResponse;
+import com.example.chatapp.model.dto.room.RoomDTO;
 import com.example.chatapp.model.dto.room.RoomListResponse;
 import com.example.chatapp.service.RoomService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,6 +17,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -79,9 +80,44 @@ public class RoomController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get a room by ID")
-    public ResponseEntity<Room> getRoomById(@PathVariable Long id) {
+    @Operation(summary = "Get room by ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Room information returned",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CreateRoomResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Room not found",
+                    content = @Content),
+            @ApiResponse(responseCode = "401", description = "User is not authenticated",
+                    content = @Content)
+    })
+    public ResponseEntity<RoomDTO> getRoomById(@PathVariable Long id) {
         log.info("Search for a room by ID: {}", id);
         return ResponseEntity.ok(roomService.getRoomById(id));
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("@roomSecurity.isOwner(#id, authentication.name)")
+    @Operation(summary = "Delete room by id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Room removed", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Room not found",
+                    content = @Content),
+            @ApiResponse(responseCode = "401", description = "User is not authenticated",
+                    content = @Content),
+            @ApiResponse(responseCode = "403", description = "User is not the owner",
+                    content = @Content)
+    })
+    public ResponseEntity<Void> deleteRoomById(@PathVariable Long id) {
+        log.info("Delete a room by ID: {}", id);
+        roomService.deleteRoomById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/join")
+    public ResponseEntity<Void> joinRoom(@PathVariable Long id, @Parameter(hidden = true) Authentication authentication) {
+        log.info("Join a room by ID: {}", id);
+        roomService.joinToRoom(id, authentication);
+        //TODO
+        return null;
     }
 }

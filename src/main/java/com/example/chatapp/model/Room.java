@@ -51,4 +51,12 @@ public class Room {
     @ManyToMany
     private List<User> members;
     private LocalDateTime createdAt;
+
+    public void addMember(User user) {
+        this.members.add(user);
+    }
+
+    public void removeMember(User user) {
+        this.members.remove(user);
+    }
 }
