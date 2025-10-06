@@ -1,5 +1,6 @@
 package com.example.chatapp.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
@@ -29,6 +30,7 @@ public class Room {
     private Long id;
     @NotBlank
     @Size(min = 5, max = 128)
+    @Schema(description = "Room name")
     private String name;
     @Size(max = 1000)
     private String description;
@@ -51,4 +53,13 @@ public class Room {
     @ManyToMany
     private List<User> members;
     private LocalDateTime createdAt;
+    private LocalDateTime deleteAfter;
+
+    public void addMember(User user) {
+        this.members.add(user);
+    }
+
+    public void removeMember(User user) {
+        this.members.remove(user);
+    }
 }

@@ -1,5 +1,6 @@
 package com.example.chatapp.model.dto.message;
 
+import com.example.chatapp.model.Message;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
@@ -26,4 +27,12 @@ public class MessageDTO {
 
     @Schema(description = "Dispatch time", example = "2025-07-15T14:30:00")
     LocalDateTime timestamp;
+
+    public static MessageDTO fromMessage(final Message message) {
+        return MessageDTO.builder()
+                .sender(message.getSender())
+                .content(message.getContent())
+                .timestamp(message.getTimestamp())
+                .build();
+    }
 }

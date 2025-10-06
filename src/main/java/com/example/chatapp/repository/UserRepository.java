@@ -7,10 +7,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
+
+    @Query("SELECT u FROM Room r JOIN r.members u WHERE r.id = :roomId")
+    List<User> findMembersByRoomId(@Param("roomId") Long roomId);
 
     @Modifying
     @Query("UPDATE User u SET u.password = :password WHERE u.email = :email")
@@ -60,36 +64,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
      */
     boolean existsByUsername(String username);
 
-    /**
-     * Optional: find user by email (ignoring case)
-     *
-     * @param email user's email
-     * @return Optional<User>
-     */
-    Optional<User> findByEmailIgnoreCase(String email);
-
-    /**
-     * Optional: find user by username (ignoring case)
-     *
-     * @param username username
-     * @return Optional<User>
-     */
-    Optional<User> findByUsernameIgnoreCase(String username);
-
-    /**
-     * Optional: check existence by email (ignoring case)
-     *
-     * @param email user email
-     * @return boolean
-     */
-    boolean existsByEmailIgnoreCase(String email);
-
-    /**
-     * Optional: check existence by username (ignoring case)
-     *
-     * @param username username
-     * @return boolean
-     */
-    boolean existsByUsernameIgnoreCase(String username);
 
 }
