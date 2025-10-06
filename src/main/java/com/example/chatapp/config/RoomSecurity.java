@@ -3,6 +3,8 @@ package com.example.chatapp.config;
 import com.example.chatapp.handler.exception.RoomNotFoundException;
 import com.example.chatapp.model.Room;
 import com.example.chatapp.repository.RoomRepository;
+import com.example.chatapp.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -11,10 +13,19 @@ import org.springframework.stereotype.Component;
 public class RoomSecurity {
 
     private final RoomRepository roomRepository;
+    private final UserRepository userRepository;
 
     public boolean isOwner(Long roomId, String username) {
         Room room = roomRepository.findByIdWithOwner(roomId)
                 .orElseThrow(() -> new RoomNotFoundException("Room not found: " + roomId));
         return room.getOwner().getUsername().equals(username);
+    }
+
+    @Transactional()
+    public boolean isRoomMember(Long roomId, String username) {
+        if (!roomRepository.existsById(roomId)) {
+            throw new RoomNotFoundException("Room not found: " + roomId);
+        }
+        return roomRepository.isMember(roomId, username);
     }
 }

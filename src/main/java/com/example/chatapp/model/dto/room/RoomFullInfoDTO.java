@@ -15,23 +15,24 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(description = "Room information")
-public class RoomDTO {
+@Schema(description = "Updated room information after a user joins the room")
+public class RoomFullInfoDTO {
     private Long id;
     @Schema(description = "Room name", example = "general", requiredMode = Schema.RequiredMode.REQUIRED)
     private String name;
     private String description;
     private List<Topic> topics;
+    private Long membersCount;
     private Long memberLimit;
     private String ownerName;
     private LocalDateTime createdAt;
 
-    public static RoomDTO fromEntity(Room room) {
-        return RoomDTO.builder()
+    public static RoomFullInfoDTO fromEntity(Room room) {
+        return RoomFullInfoDTO.builder()
                 .id(room.getId())
                 .name(room.getName())
                 .description(room.getDescription())
-                .topics(room.getTopics())
+                .membersCount((long) room.getMembers().size())
                 .memberLimit(room.getMemberLimit())
                 .ownerName(room.getOwner().getUsername())
                 .createdAt(room.getCreatedAt())

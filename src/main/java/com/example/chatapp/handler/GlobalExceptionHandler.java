@@ -15,6 +15,11 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(RoomLimitMembersException.class)
+    public ResponseEntity<String> handleRoomLimitMembersException(RoomLimitMembersException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(RoomOwnershipLimitExceededException.class)
     public ResponseEntity<String> handleRoomOwnershipLimitExceededException(RoomOwnershipLimitExceededException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
