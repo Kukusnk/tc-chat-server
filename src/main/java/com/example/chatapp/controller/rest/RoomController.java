@@ -34,10 +34,10 @@ public class RoomController {
     @Operation(
             summary = "Create a new chat room",
             description = """
-                    Creates a new chat room with the provided parameters. 
-                    - User can create up to 5 chat rooms. 
-                    - Chat room name must be unique (5–128 characters). 
-                    - Description is optional (up to 1000 characters). 
+                    Creates a new chat room with the provided parameters.
+                    - User can create up to 5 chat rooms.
+                    - Chat room name must be unique (5–128 characters).
+                    - Description is optional (up to 1000 characters).
                     - The creator is automatically added as the first member of the room.
                     - If member limit is not specified, the default maximum (100) will apply.
                     """

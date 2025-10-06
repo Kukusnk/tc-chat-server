@@ -64,36 +64,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
      */
     boolean existsByUsername(String username);
 
-    /**
-     * Optional: find user by email (ignoring case)
-     *
-     * @param email user's email
-     * @return Optional<User>
-     */
-    Optional<User> findByEmailIgnoreCase(String email);
-
-    /**
-     * Optional: find user by username (ignoring case)
-     *
-     * @param username username
-     * @return Optional<User>
-     */
-    Optional<User> findByUsernameIgnoreCase(String username);
-
-    /**
-     * Optional: check existence by email (ignoring case)
-     *
-     * @param email user email
-     * @return boolean
-     */
-    boolean existsByEmailIgnoreCase(String email);
-
-    /**
-     * Optional: check existence by username (ignoring case)
-     *
-     * @param username username
-     * @return boolean
-     */
-    boolean existsByUsernameIgnoreCase(String username);
 
 }

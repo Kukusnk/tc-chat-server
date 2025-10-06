@@ -36,7 +36,5 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
             """)
     Page<Room> findAvailableRooms(Pageable pageable);
 
-    boolean existsByName(String name);
-
     List<Room> findAllByDeleteAfterBefore(LocalDateTime now);
 }
