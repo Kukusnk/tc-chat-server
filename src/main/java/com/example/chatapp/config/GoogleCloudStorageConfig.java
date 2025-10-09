@@ -32,10 +32,10 @@ public class GoogleCloudStorageConfig {
 //        return StorageOptions.getDefaultInstance().getService();
 //    }
 
-    @Value("${GOOGLE_CREDENTIALS_JSON:}") // JSON из переменной окружения
+    @Value("${gcp.credentials.json}") // JSON из переменной окружения
     private String googleCredentials;
 
-    @Value("${GCP_PROJECT_ID:team-challenge-chat-470916}")
+    @Value("${gcp.storage.project-id}")
     private String projectId;
 
     @Bean

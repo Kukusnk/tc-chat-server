@@ -141,6 +141,12 @@
             <artifactId>sendgrid-java</artifactId>
             <version>4.10.2</version>
         </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
 
         <!--        &lt;!&ndash; https://mvnrepository.com/artifact/com.google.api-client/google-api-client &ndash;&gt;-->
         <!--        <dependency>-->

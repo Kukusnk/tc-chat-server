@@ -14,8 +14,8 @@ public class RoomSecurity {
     private final RoomRepository roomRepository;
 
     public boolean isOwner(Long roomId, String username) {
-        Room room = roomRepository.findByIdWithOwner(roomId)
-                .orElseThrow(() -> new RoomNotFoundException("Room not found: " + roomId));
+        Room room = roomRepository.findByIdWithOwner(roomId);
+        if (room == null) return false;
         return room.getOwner().getUsername().equals(username);
     }
 

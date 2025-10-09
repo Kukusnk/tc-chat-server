@@ -34,7 +34,7 @@ public class RoomFullInfoDTO {
                 .description(room.getDescription())
                 .membersCount((long) room.getMembers().size())
                 .memberLimit(room.getMemberLimit())
-                .ownerName(room.getOwner().getUsername())
+                .ownerName((room.getOwner() != null) ? room.getOwner().getUsername() : null)
                 .createdAt(room.getCreatedAt())
                 .build();
     }
