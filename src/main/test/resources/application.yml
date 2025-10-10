@@ -1,0 +1,48 @@
+jwt:
+  secret: mySecretKey123456789012345678901234567890
+  expiration: 86400 # 24 hours in seconds
+  refresh-expiration: 2592000 # 30 days in seconds
+  test-expiration: 60 # 1 minute for tests
+
+gcp:
+  storage:
+    bucket: team-challenge-chat-470916.appspot.com
+    project-id: team-challenge-chat-470916
+  credentials:
+    json: '{"type":"service_account","project_id":"team-challenge-chat-470916","private_key_id":"f4e08c769a63002e1b62b6781546108cece223dd","private_key":"-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCyg3N7BQ27nU1M\nbW/D/2N/YNAYjCHrGmJlBIf6263/9pIVGX1Zwk1r4w+m2ccz0aWfdIJfZ1abHfsq\n7ux9EmgVQEh/lvevgDIyJinUao4LgTuFfvYJ7fifw+kE1B36YjWwpB2m7/TCXJgC\n3ucs2QjIW4nXe0Fd64P5H2sEtTDQlnS755MPDfl7hWTFlpteYBByKpPctHYSzSje\nEgSWZL0QgOcBAzvV3178k1fFAf5exEjKJNRJpWzCBeosRc//UdG9V2+gph53175h\n5KxmUlLOPNKhHRkScQqBP6qvcVmbfF4+DD/LvgF3s3r+x503FJYNFi1r7UrIKh+o\n72ElFZUFAgMBAAECggEABle3OSIzrw+Wl3YikAYP0M7acSpwQ+Eoj1Qv1hKYAvD0\nFxjt52WvTtUrvgvDvekMRGQSA/x3ayRpNoj0MQWmWi2+4n4O8V0+i1UbTEXEvVub\nYL6JoYGWZ9JnNSmpogPH/a135z5930NsD3TZ8mUIujO0bCO5oOU1R6f3EbaaLcMN\n+hqPolmHw+VY+tMn72xVNoU6VLLyahcGhHQg1u4wvq0BDDEnUdPBU7wA1YsnlUyi\niFHYukzkQuhLrtCLAM9n5wjr7TupAPsn7xevgVNj2evPQHrtP3m/2si//FFXtWo8\nqmfXK7LObEzZv4eN6N6gK/MOp91E0PZOVuzrucY9cQKBgQDZkv5675pWfox3SHrx\nEmRCOpoB0OD3o6XRlQLaEkhOTi0DdMaG0XMxoxA1C/bxXcENxxLOEwq+fdVxkG/9\nrKfZJMD04pAsP/S7TwGRgIRXv0tCvzFgJHFL9XCeyflK6qGsD+QjhnU2jxeh3iVY\nNGAXguVFh+B3Ky1QGtGoOP+V9QKBgQDSCm/Cud2pLMXRxTxMuVVGpQQjkJu0Gklw\nHLAlXrNnjmc/JPtO5uVCO90aS9oyN9UAvOuSuj5sb0HnM49ka99DT+M3UOaNeHbY\nobld4fZ2h8bvl3M0FA4OHeP+SKzocSZ1IxoAlWOPgIPrgvawHHRcqL12jqE5rYUf\n8IcHJnqI0QKBgQCQW5pjQPSbLO3P+xQvPS+uTal/SPLq+/Z6Py8cN4MoCXCOWX2b\nV/7hUTrgp2aaMMV1eb89YZ8AUwc6iUX0/wiC54LrOCPGaEzdtobo3mdwvOiXibmd\n+6/8YQXvJT01esX4HrcU5xKAN6LLcFRA2Mdk8iFi58uD5e7ztkejIOZbvQKBgEd3\na52LFmPIqyp7/M9yRBS8cxMS0hfO1ewCpuCgP1Td/D1c/PFU2O7XZZzb8Esj+iK9\nJT6Qhkro9DiRr5mQpq/Fj98zdK7wLSf6pxLNnsmn20WMd5Nhu4KMIxZTbhnM3jP/\nFIrcSbr7FGfe8Mbtd55Lf+PGFg+E/gXnFlqVeh3xAoGAMSMPNGCP+XFEH0Q3nlu6\nJ0UXJlAiUnyL2xkKrRpSkq1OxRqbmImObIEjZT12/fAUYtuxWAJWmbRF1VMxykek\nSKzIgflQQPfvT36Jq2J7qGdkw2whXgdIWa9cIkR/tJzEd7CfTt3oOwhrMADvj8zT\naKvlsSUV1AgUXoWoIqAuT7s=\n-----END PRIVATE KEY-----\n","client_email":"spring-storage-sa@team-challenge-chat-470916.iam.gserviceaccount.com","client_id":"117474774786150639783","auth_uri":"https://accounts.google.com/o/oauth2/auth","token_uri":"https://oauth2.googleapis.com/token","auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs","client_x509_cert_url":"https://www.googleapis.com/robot/v1/metadata/x509/spring-storage-sa%40team-challenge-chat-470916.iam.gserviceaccount.com","universe_domain":"googleapis.com"}'
+
+
+sendgrid:
+  api-key: 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
+  from:
+    email: chat.team.challange.app@gmail.com
+    name: Chat App
+
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect
+  sql:
+    init:
+      mode: never
+  liquibase:
+    enabled: false
+  h2:
+    console:
+      enabled: false
+
+springwolf:
+  enabled: false
+logging:
+  level:
+    org:
+      springframework:
+        boot:
+          autoconfigure: DEBUG

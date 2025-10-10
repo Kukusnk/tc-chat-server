@@ -11,9 +11,6 @@ import com.example.chatapp.model.User;
 import com.example.chatapp.model.dto.message.MessageDTO;
 import com.example.chatapp.model.dto.room.*;
 import com.example.chatapp.repository.MessageRepository;
-import com.example.chatapp.model.dto.room.CreateRoomRequest;
-import com.example.chatapp.model.dto.room.CreateRoomResponse;
-import com.example.chatapp.model.dto.room.RoomSearchResponse;
 import com.example.chatapp.repository.RoomRepository;
 import com.example.chatapp.repository.TopicRepository;
 import com.example.chatapp.repository.UserRepository;
@@ -115,6 +112,9 @@ public class RoomService {
 
     @Transactional
     public void deleteRoomById(Long id) {
+        if (!roomRepository.existsById(id)) {
+            throw new RoomNotFoundException("Room id=" + id + " not found");
+        }
         log.info("Delete room by id - {}", id);
         messageRepository.deleteByRoomId(id);
         roomRepository.deleteById(id);
@@ -181,8 +181,7 @@ public class RoomService {
                                                 List<Long> topicIds,
                                                 boolean joined,
                                                 Pageable pageable,
-                                                Authentication authentication)
-    {
+                                                Authentication authentication) {
         Specification<Room> spec = buildSpecification(search, topicIds, pageable);
 
         if (joined) {

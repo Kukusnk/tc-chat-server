@@ -52,9 +52,9 @@ public class RoomController {
                     content = @Content),
             @ApiResponse(responseCode = "401", description = "User is not authenticated",
                     content = @Content),
-            @ApiResponse(responseCode = "403", description = "User has reached the maximum number of owned rooms",
+            @ApiResponse(responseCode = "404", description = "Topic not found",
                     content = @Content),
-            @ApiResponse(responseCode = "409", description = "Room with the same name already exists",
+            @ApiResponse(responseCode = "409", description = "User has reached the maximum number of owned rooms",
                     content = @Content)
     })
     public ResponseEntity<CreateRoomResponse> createRoom(@Valid @RequestBody CreateRoomRequest request,
@@ -109,24 +109,24 @@ public class RoomController {
     @Operation(
             summary = "Search chat rooms",
             description = """
-                Searches for chat rooms based on provided filters:
-                - Search by room name, description, or topic name.
-                - Filter by one or multiple topics (all specified topics must match).
-                - Optionally return only rooms where the authenticated user is a member (joined=true).
-                - Supports sorting by creation date, name, and number of participants.
-                - Supports pagination.
-                
-                Pagination parameters:
-                - `page` (default = 0): Page number (0-based).
-                - `size` (default = 20): Number of results per page.
-                
-                Sorting parameter:
-                - `sort` (can be repeated): Format is `property,(asc|desc)`.
-                  Examples:
-                  - `sort=name,asc`
-                  - `sort=createdAt,desc`
-                  - `sort=membersCount,desc`
-                """
+                    Searches for chat rooms based on provided filters:
+                    - Search by room name, description, or topic name.
+                    - Filter by one or multiple topics (all specified topics must match).
+                    - Optionally return only rooms where the authenticated user is a member (joined=true).
+                    - Supports sorting by creation date, name, and number of participants.
+                    - Supports pagination.
+                    
+                    Pagination parameters:
+                    - `page` (default = 0): Page number (0-based).
+                    - `size` (default = 20): Number of results per page.
+                    
+                    Sorting parameter:
+                    - `sort` (can be repeated): Format is `property,(asc|desc)`.
+                      Examples:
+                      - `sort=name,asc`
+                      - `sort=createdAt,desc`
+                      - `sort=membersCount,desc`
+                    """
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Search results successfully returned",

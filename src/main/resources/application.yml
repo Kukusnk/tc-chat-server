@@ -10,7 +10,9 @@ server:
 gcp:
   storage:
     bucket: team-challenge-chat-470916.appspot.com
-
+    project-id: ${GCP_PROJECT_ID}
+  credentials:
+    json: ${GOOGLE_CREDENTIALS_JSON}
 jwt:
   secret: mySecretKey123456789012345678901234567890
   expiration: 86400 # 24 hours in seconds
