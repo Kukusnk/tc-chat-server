@@ -93,3 +93,11 @@ logging:
     com.google.api: INFO
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+adminInitializer:
+  adminName: ${ADMIN_NAME}
+  adminEmail: ${ADMIN_EMAIL}
+  adminPassword: ${ADMIN_PASSWORD}
+  userName: ${USER_NAME}
+  userEmail: ${USER_EMAIL}
+  userPassword: ${USER_PASSWORD}
