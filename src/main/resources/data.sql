@@ -12,4 +12,5 @@ INSERT INTO topic (name) VALUES
     ('Finance')
 ON CONFLICT (name) DO NOTHING;
 
+
 INSERT INTO role (name) VALUES ('USER'), ('ADMIN') ON CONFLICT (name) DO NOTHING;

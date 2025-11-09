@@ -24,80 +24,21 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
-    private final EmailVerificationCodeRepository emailVerificationCodeRepository;
+    private final EmailVerificationCodeRepository repository;
 
     @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, EmailVerificationCodeRepository emailVerificationCodeRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
-        this.emailVerificationCodeRepository = emailVerificationCodeRepository;
+        this.repository = emailVerificationCodeRepository;
     }
 
-//    public String uploadUserAvatar(String username, MultipartFile file) throws IOException {
-//        User user = userRepository.findByUsername(username)
-//                .orElseThrow(() -> new RuntimeException("User not found"));
-//
-//        // Validate file
-//        validateAvatarFile(file);
-//
-//        // Upload new avatar
-//        String newAvatarUrl = googleDriveService.uploadAvatar(file, username);
-//        String newFileId = extractFileIdFromUrl(newAvatarUrl);
-//
-//        // Delete old avatar if exists
-//        if (user.getAvatarFileId() != null) {
-//            try {
-//                googleDriveService.deleteAvatar(user.getAvatarFileId());
-//            } catch (Exception e) {
-//                log.warn("Failed to delete old avatar: {}", e.getMessage());
-//            }
-//        }
-//
-//        // Update user
-//        user.setAvatarUrl(newAvatarUrl);
-//        user.setAvatarFileId(newFileId);
-//        userRepository.save(user);
-//
-//        return newAvatarUrl;
-//    }
-//
-//    public void deleteUserAvatar(String username) throws IOException {
-//        User user = userRepository.findByUsername(username)
-//                .orElseThrow(() -> new RuntimeException("User not found"));
-//
-//        if (user.getAvatarFileId() != null) {
-//            googleDriveService.deleteAvatar(user.getAvatarFileId());
-//            user.setAvatarUrl(null);
-//            user.setAvatarFileId(null);
-//            userRepository.save(user);
-//        }
-//    }
-//
-//    private void validateAvatarFile(MultipartFile file) {
-//        if (file.isEmpty()) {
-//            throw new RuntimeException("File is empty");
-//        }
-//
-//        // Check file size (5MB max)
-//        if (file.getSize() > 5 * 1024 * 1024) {
-//            throw new RuntimeException("File size exceeds 5MB limit");
-//        }
-//
-//        // Check file type
-//        String contentType = file.getContentType();
-//        if (contentType == null || !contentType.startsWith("image/")) {
-//            throw new RuntimeException("Only image files are allowed");
-//        }
-//    }
-//
-//    private String extractFileIdFromUrl(String driveUrl) {
-//        if (driveUrl != null && driveUrl.contains("id=")) {
-//            return driveUrl.substring(driveUrl.indexOf("id=") + 3);
-//        }
-//        return null;
-//    }
-
+    public boolean isEmailVerified(String email) {
+        return repository
+                .findByEmailAndCodeTypeAndIsUsed(email, EmailVerificationCode.CodeType.EMAIL_VERIFICATION, true)
+                .isPresent();
+    }
 
     @Transactional
     public AccessToken updateUserUsername(String username, String newUsername) {
@@ -125,10 +66,10 @@ public class UserService {
         }
 
         if (!isEmailVerified(newEmail)) {
-            throw new UnverifiedEmailException("Email verification failed: " + newEmail + " is not verified");
+            userRepository.updateEmailByUsername(username, newEmail);
+            userRepository.updateIsEmailVerifiedByUsername(username, false);
         }
 
-        userRepository.updateEmailByUsername(username, newEmail);
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException("User with username '" + username + "' not found"));
         String accessToken = jwtUtil.generateToken(username, user.getRoles());
         String refreshToken = jwtUtil.generateResetToken(newEmail);
@@ -140,11 +81,6 @@ public class UserService {
                 .build();
     }
 
-    public boolean isEmailVerified(String email) {
-        return emailVerificationCodeRepository
-                .findByEmailAndCodeTypeAndIsUsed(email, EmailVerificationCode.CodeType.EMAIL_VERIFICATION, true)
-                .isPresent();
-    }
 
     @Transactional
     public void deleteUserByUsername(String username, String password) {
@@ -212,8 +148,12 @@ public class UserService {
             user.setUsername(newUsername);
             accessToken = jwtUtil.generateToken(newUsername, user.getRoles());
         }
-        if (!passwordEncoder.matches(userData.getPassword(), user.getPassword())) {
-            user.setPassword(passwordEncoder.encode(userData.getPassword()));
+        String newPassword = userData.getPassword();
+        if (!passwordEncoder.matches(newPassword, user.getPassword())) {
+            if (newPassword.length() < 8) {
+                throw new UserPasswordException("Password length should be at least 8 characters");
+            }
+            user.setPassword(passwordEncoder.encode(newPassword));
         }
 
         String newEmail = userData.getEmail();
@@ -223,7 +163,7 @@ public class UserService {
                 throw new UserEmailException("User with email '" + newEmail + "' already exists");
             }
             if (!isEmailVerified(newEmail)) {
-                throw new UnverifiedEmailException("Email verification failed: " + newEmail + " is not verified");
+                user.setIsEmailVerified(false);
             }
             user.setEmail(newEmail);
             refreshToken = jwtUtil.generateResetToken(newEmail);
