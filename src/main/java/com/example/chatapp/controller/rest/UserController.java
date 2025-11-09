@@ -64,6 +64,29 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserDTOByUsernameOrThrow(authentication.getName()));
     }
 
+    @Operation(summary = "Validate user password")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserValidatePasswordResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Bad request",
+                    content = @Content(mediaType = "application/json",
+                            examples = {
+                                    @ExampleObject(name = "Validation error", value = "Password must be at least 8 characters long"),
+                                    @ExampleObject(name = "Wrong old password", value = "Current password is incorrect")
+                            }))
+    })
+    @PostMapping("/me/validate-password")
+    public ResponseEntity<UserValidatePasswordResponse> validatePassword(@RequestBody UpdateUserPasswordDTO password, Authentication authentication) {
+        boolean isValid = userService.validatePassword(authentication, password.password());
+        return ResponseEntity.ok(
+                UserValidatePasswordResponse.builder()
+                        .valid(isValid)
+                        .message(isValid ? "Password is correct" : "Invalid password")
+                        .build()
+        );
+    }
+
     /**
      * Update current user's data
      */
@@ -84,7 +107,7 @@ public class UserController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "User updated, new access and refresh tokens returned",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = AccessToken.class))),
+                            schema = @Schema(implementation = AuthResponse.class))),
             @ApiResponse(responseCode = "400", description = "Bad request",
                     content = @Content(mediaType = "application/json",
                             examples = {

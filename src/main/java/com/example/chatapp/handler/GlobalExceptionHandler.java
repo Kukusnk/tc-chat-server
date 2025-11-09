@@ -64,6 +64,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 
+    @ExceptionHandler(UserPasswordException.class)
+    public ResponseEntity<String> handleUserPasswordException(UserPasswordException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
     @ExceptionHandler(VerificationException.class)
     public ResponseEntity<String> handleVerificationException(VerificationException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());

@@ -1,10 +1,13 @@
 package com.example.chatapp.controller.rest;
 
 import com.example.chatapp.model.User;
+import com.example.chatapp.model.dto.avatar.AvatarResponse;
 import com.example.chatapp.repository.UserRepository;
 import com.example.chatapp.service.AvatarStorageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -16,8 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/avatar")
@@ -34,13 +35,15 @@ public class AvatarController {
             description = "Upload a new avatar image for the authenticated user"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Avatar uploaded successfully"),
+            @ApiResponse(responseCode = "200", description = "Avatar uploaded successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = AvatarResponse.class))),
             @ApiResponse(responseCode = "400", description = "Invalid file or file validation failed"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PostMapping("/upload")
-    public ResponseEntity<Map<String, String>> uploadAvatar(
+    public ResponseEntity<AvatarResponse> uploadAvatar(
             @Parameter(description = "Avatar image file", required = true)
             @RequestParam("file") MultipartFile file,
             @Parameter(hidden = true) Authentication authentication) {
@@ -64,22 +67,18 @@ public class AvatarController {
             user.setAvatarUrl(avatarUrl);
             userRepository.save(user);
 
-            Map<String, String> response = new HashMap<>();
-            response.put("message", "Avatar uploaded successfully");
-            response.put("avatarUrl", avatarUrl);
+            AvatarResponse response = new AvatarResponse("Avatar uploaded successfully", avatarUrl);
 
             return ResponseEntity.ok(response);
 
         } catch (IOException e) {
             log.error("Failed to upload avatar", e);
-            Map<String, String> error = new HashMap<>();
-            error.put("error", "Failed to upload avatar: " + e.getMessage());
-            return ResponseEntity.badRequest().body(error);
+            AvatarResponse response = new AvatarResponse("Failed to upload avatar: " + e.getMessage(), "");
+            return ResponseEntity.badRequest().body(response);
         } catch (Exception e) {
             log.error("Unexpected error during avatar upload", e);
-            Map<String, String> error = new HashMap<>();
-            error.put("error", "Unexpected error: " + e.getMessage());
-            return ResponseEntity.internalServerError().body(error);
+            AvatarResponse response = new AvatarResponse("Unexpected error: " + e.getMessage(), "");
+            return ResponseEntity.internalServerError().body(response);
         }
     }
 
@@ -88,14 +87,15 @@ public class AvatarController {
             description = "Delete the current avatar of the authenticated user"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Avatar deleted successfully"),
+            @ApiResponse(responseCode = "200", description = "Avatar deleted successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = AvatarResponse.class))),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
     @DeleteMapping
-    public ResponseEntity<Map<String, String>> deleteAvatar(
+    public ResponseEntity<AvatarResponse> deleteAvatar(
             @Parameter(hidden = true) Authentication authentication) {
-
         try {
             String username = authentication.getName();
             User user = userRepository.findByUsername(username)
@@ -107,16 +107,14 @@ public class AvatarController {
                 userRepository.save(user);
             }
 
-            Map<String, String> response = new HashMap<>();
-            response.put("message", "Avatar deleted successfully");
+            AvatarResponse response = new AvatarResponse("Avatar deleted successfully", "");
 
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
             log.error("Failed to delete avatar", e);
-            Map<String, String> error = new HashMap<>();
-            error.put("error", "Failed to delete avatar: " + e.getMessage());
-            return ResponseEntity.badRequest().body(error);
+            AvatarResponse response = new AvatarResponse("Failed to delete avatar: " + e.getMessage(), "");
+            return ResponseEntity.badRequest().body(response);
         }
     }
 
@@ -124,16 +122,22 @@ public class AvatarController {
             summary = "Get avatar URL",
             description = "Get the current avatar URL of the authenticated user"
     )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Get avatar URL",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = AvatarResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
     @GetMapping
-    public ResponseEntity<Map<String, String>> getAvatar(
+    public ResponseEntity<AvatarResponse> getAvatar(
             @Parameter(hidden = true) Authentication authentication) {
 
         String username = authentication.getName();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Map<String, String> response = new HashMap<>();
-        response.put("avatarUrl", user.getAvatarUrl());
+        AvatarResponse response = new AvatarResponse("", user.getAvatarUrl());
 
         return ResponseEntity.ok(response);
     }
