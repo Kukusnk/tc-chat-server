@@ -6,7 +6,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Этап запуска
-FROM eclipse-temurin:17-jdk
+FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
 COPY --from=build /app/target/chat-app.jar /app/chat-app.jar
 EXPOSE 8080

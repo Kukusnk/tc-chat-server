@@ -32,6 +32,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("UPDATE User u SET u.username = :new_username WHERE u.username = :username")
     void updateUsernameByUsername(@Param("username") String username, @Param("new_username") String new_username);
 
+    @Modifying
+    @Query("UPDATE User u SET u.isEmailVerified = :is_email_verified WHERE u.username = :username")
+    void updateIsEmailVerifiedByUsername(@Param("username") String username, @Param("is_email_verified") Boolean email);
+
     /**
      * Find a user by email     *
      *

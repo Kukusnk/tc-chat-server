@@ -20,7 +20,8 @@ public class Test {
 //        for (int i = 0; i < 10; i++) {
 //            System.out.println(100000 + random.nextInt(900000));
 //        }
-        String password = "kukusnk12";
+        //System.out.println(passwordEncoder.encode("$2a$10$KnVjJH41M0tyh/ZVnHHf2.QSRuNNleVZVPEDNRg7Jj2MK7TjyDufy"));
+        String password = "FirstUser";
         System.out.println(passwordEncoder.encode(password));
 
     }
