@@ -83,7 +83,7 @@ public class UserController {
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "User updated, new access and refresh tokens returned",
-                    content = @Content(mediaType = "text/plain",
+                    content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = AccessToken.class))),
             @ApiResponse(responseCode = "400", description = "Bad request",
                     content = @Content(mediaType = "application/json",
