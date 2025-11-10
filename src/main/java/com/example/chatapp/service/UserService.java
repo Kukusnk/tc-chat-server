@@ -11,8 +11,11 @@ import com.example.chatapp.repository.UserRepository;
 import com.example.chatapp.util.DevTools;
 import com.example.chatapp.util.JwtUtil;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -139,7 +142,7 @@ public class UserService {
     public AuthResponse updateUser(UserDTO userData, String username) {
         User user = getUserByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException("User with username '" + username + "' not found"));
-        String newUsername = userData.getUsername();
+        String newUsername = userData.getUsername() != null ? userData.getUsername() : username;
         String accessToken = null;
         if (!user.getUsername().equals(newUsername)) {
             if (isUsernameTaken(newUsername)) {
@@ -148,7 +151,8 @@ public class UserService {
             user.setUsername(newUsername);
             accessToken = jwtUtil.generateToken(newUsername, user.getRoles());
         }
-        String newPassword = userData.getPassword();
+        String newPassword = userData.getPassword() != null ? userData.getPassword() : null;
+        if (newPassword == null) throw new UserPasswordException("Password cannot be null");
         if (!passwordEncoder.matches(newPassword, user.getPassword())) {
             if (newPassword.length() < 8) {
                 throw new UserPasswordException("Password length should be at least 8 characters");
@@ -156,7 +160,7 @@ public class UserService {
             user.setPassword(passwordEncoder.encode(newPassword));
         }
 
-        String newEmail = userData.getEmail();
+        String newEmail = userData.getEmail() != null ? userData.getEmail() : user.getEmail();
         String refreshToken = "";
         if (!user.getEmail().equals(newEmail)) {
             if (isEmailExist(newEmail)) {
@@ -179,5 +183,18 @@ public class UserService {
                 .refreshToken(refreshToken)
                 .tokenType("Bearer")
                 .build();
+    }
+
+    public boolean validatePassword(Authentication authentication, @NotBlank @Size(min = 8) String password) {
+        String currentPassword = userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new UserNotFoundException("User with username '" + authentication.getName() + "' not found"))
+                .getPassword();
+        if (password == null || password.isBlank()) {
+            throw new UserPasswordException("The password cannot be blank.");
+        }
+        if (password.length() < 8) {
+            throw new UserPasswordException("The minimum password length is 8 characters.");
+        }
+        return passwordEncoder.matches(password, currentPassword);
     }
 }
