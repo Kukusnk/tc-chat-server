@@ -139,44 +139,54 @@ public class UserService {
         userRepository.updatePasswordByEmail(email, encodedPassword);
     }
 
+    @Transactional
     public AuthResponse updateUser(UserDTO userData, String username) {
         User user = getUserByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException("User with username '" + username + "' not found"));
-        String newUsername = userData.getUsername() != null ? userData.getUsername() : username;
-        String accessToken = null;
-        if (!user.getUsername().equals(newUsername)) {
+
+        boolean needsNewAccessToken = false;
+        String newUsername = username;
+        if (userData.getUsername() != null && !user.getUsername().equals(userData.getUsername())) {
+            newUsername = userData.getUsername();
+
             if (isUsernameTaken(newUsername)) {
                 throw new UserUsernameException("User with username '" + newUsername + "' already exists");
             }
+
             user.setUsername(newUsername);
-            accessToken = jwtUtil.generateToken(newUsername, user.getRoles());
-        }
-        String newPassword = userData.getPassword() != null ? userData.getPassword() : null;
-        if (newPassword == null) throw new UserPasswordException("Password cannot be null");
-        if (!passwordEncoder.matches(newPassword, user.getPassword())) {
-            if (newPassword.length() < 8) {
-                throw new UserPasswordException("Password length should be at least 8 characters");
-            }
-            user.setPassword(passwordEncoder.encode(newPassword));
+            needsNewAccessToken = true;
         }
 
-        String newEmail = userData.getEmail() != null ? userData.getEmail() : user.getEmail();
-        String refreshToken = "";
-        if (!user.getEmail().equals(newEmail)) {
+        if (userData.getPassword() != null && !userData.getPassword().trim().isEmpty()) {
+            if (userData.getPassword().length() < 8) {
+                throw new UserPasswordException("Password length should be at least 8 characters");
+            }
+
+            if (!passwordEncoder.matches(userData.getPassword(), user.getPassword())) {
+                user.setPassword(passwordEncoder.encode(userData.getPassword()));
+            }
+        }
+
+        String refreshToken = null;
+        if (userData.getEmail() != null && !user.getEmail().equals(userData.getEmail())) {
+            String newEmail = userData.getEmail();
+
             if (isEmailExist(newEmail)) {
                 throw new UserEmailException("User with email '" + newEmail + "' already exists");
             }
-            if (!isEmailVerified(newEmail)) {
-                user.setIsEmailVerified(false);
-            }
+
             user.setEmail(newEmail);
+            user.setIsEmailVerified(false);
+
             refreshToken = jwtUtil.generateResetToken(newEmail);
-            if (accessToken == null) {
-                accessToken = jwtUtil.generateToken(username, user.getRoles());
-            }
+            needsNewAccessToken = true;
         }
 
         userRepository.save(user);
+
+        String accessToken = needsNewAccessToken
+                ? jwtUtil.generateToken(newUsername, user.getRoles())
+                : null;
 
         return AuthResponse.builder()
                 .accessToken(accessToken)

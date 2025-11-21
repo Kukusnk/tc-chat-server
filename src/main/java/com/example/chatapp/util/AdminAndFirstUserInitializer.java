@@ -41,7 +41,9 @@ public class AdminAndFirstUserInitializer implements CommandLineRunner {
         Role userRole = roleRepository.findByName("USER")
                 .orElseThrow(() -> new RoleNotFoundException("Role not found"));
 
-        if (userRepository.findByUsername(adminName).isEmpty()) {
+        if (userRepository.findByUsername(adminName).isPresent() || userRepository.findByEmail(adminEmail).isPresent()) {
+            log.info("Admin user already exists, skipping creation.");
+        } else {
             Role adminRole = roleRepository.findByName("ADMIN")
                     .orElseThrow(() -> new RoleNotFoundException("Role ADMIN not found"));
 
@@ -58,11 +60,11 @@ public class AdminAndFirstUserInitializer implements CommandLineRunner {
 
             userRepository.save(admin);
             log.info("Default admin user created: {} / {}", admin.getUsername(), admin.getEmail());
-        } else {
-            log.info("Admin user already exists, skipping creation.");
         }
 
-        if (userRepository.findByUsername(userName).isEmpty()) {
+        if (userRepository.findByUsername(userName).isPresent() || userRepository.findByEmail(userEmail).isPresent()) {
+            log.info("User already exists, skipping creation.");
+        } else {
             User user = User.builder()
                     .username(userName)
                     .email(userEmail)
@@ -75,8 +77,6 @@ public class AdminAndFirstUserInitializer implements CommandLineRunner {
 
             userRepository.save(user);
             log.info("Default user created: {} / {}", user.getUsername(), user.getEmail());
-        } else {
-            log.info("User already exists, skipping creation.");
         }
     }
 }
