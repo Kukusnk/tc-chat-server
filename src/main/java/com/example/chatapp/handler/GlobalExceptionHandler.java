@@ -2,10 +2,12 @@ package com.example.chatapp.handler;
 
 import com.example.chatapp.handler.exception.*;
 import com.example.chatapp.model.dto.email_verification.VerificationResponse;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.transaction.TransactionSystemException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -13,10 +15,48 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(TransactionSystemException.class)
+    public ResponseEntity<Map<String, Object>> handleTransactionSystemException(TransactionSystemException ex) {
+        Throwable cause = ex.getRootCause();
+        if (cause instanceof ConstraintViolationException validationException) {
+            Map<String, String> errors = new HashMap<>();
+            validationException.getConstraintViolations().forEach(violation ->
+                    errors.put(violation.getPropertyPath().toString(), violation.getMessage())
+            );
+
+            Map<String, Object> body = new LinkedHashMap<>();
+            body.put("status", 400);
+            body.put("errors", errors);
+            return ResponseEntity.badRequest().body(body);
+        }
+        
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("status", 500);
+        body.put("error", "Internal Server Error");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<Map<String, Object>> handleConstraintViolation(ConstraintViolationException ex) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("status", 400);
+
+        Map<String, String> errors = new HashMap<>();
+        ex.getConstraintViolations().forEach(error ->
+                errors.put(error.getPropertyPath().toString(), error.getMessage())
+        );
+
+        body.put("errors", errors);
+        return ResponseEntity.badRequest().body(body);
+    }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<String> handleAccessDeniedException(final AccessDeniedException e) {

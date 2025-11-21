@@ -23,7 +23,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     @NotBlank
-    @Size(min = 4, max = 16, message = "Username must be between 4 and 16")
+    @Size(min = 4, max = 15, message = "Username must be between 4 and 15")
     @Column(unique = true)
     String username;
     @Email(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
